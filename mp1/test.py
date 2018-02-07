@@ -17,6 +17,8 @@ def getMaze(path):
     while maze[i] != '\n':
         i += 1
 
+    test = [1,2]
+    print test[-1]
     maze_width = i+1           # This is for up/down calculations
     x = 0
     y = 0
