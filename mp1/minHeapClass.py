@@ -4,6 +4,9 @@ class minHeap:
     def __init__(self):
         self.priorityQueue = []
 
+    def isEmpty(self):
+        return len(self.priorityQueue) == 0
+
     def push(self, cell, heuristicPriority):
         heapq.heappush(self.priorityQueue, (heuristicPriority, cell))
 
