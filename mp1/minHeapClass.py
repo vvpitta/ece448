@@ -1,15 +1,15 @@
 import heapq
 
-class minHeap:
+class MinHeap:
     def __init__(self):
-        self.priorityQueue = []
-
-    def push(self, cell, heuristicPriority):
-        heapq.heappush(self.priorityQueue, (heuristicPriority, cell))
-
-    def pop(self):
-        retval = heapq.heappop(self.priorityQueue)
-        return retval[1]
+        self.data = []
 
     def isEmpty(self):
-        return len(self.priorityQueue) == 0
+        return len(self.data) == 0
+
+    def push(self, cell, key):
+        heapq.heappush(self.data, (key, cell))
+
+    def pop(self):
+        retval = heapq.heappop(self.data)
+        return retval[1]
