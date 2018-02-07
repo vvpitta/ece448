@@ -17,8 +17,7 @@ def getMaze(path):
     while maze[i] != '\n':
         i += 1
 
-    test = [1,2]
-    print test[-1]
+
     maze_width = i+1           # This is for up/down calculations
     x = 0
     y = 0
@@ -41,10 +40,11 @@ def getMaze(path):
         elif maze[idx] == '.':
             cell = mazeCell(idx, x, y, idx-maze_width, idx+maze_width, idx-1, idx+1, False, True, False)
             cell_list.append(cell)
+            finIdx = idx
             x += 1
         else:
             cell = mazeCell(idx, x, y, idx-maze_width, idx+maze_width, idx-1, idx+1, False, False, False)
             cell_list.append(cell)
             x += 1
 
-    return maze, cell_list, startIdx
+    return maze, cell_list, startIdx, finIdx
