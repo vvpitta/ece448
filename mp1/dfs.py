@@ -1,7 +1,7 @@
 from mclass import *
-from test import *
+from maze import *
 
-maze, cell_list, startIdx = getMaze('/openMaze.txt')
+maze, cell_list, startIdx, finIdx = getMaze('/openMaze.txt')
 
 print maze
 
