@@ -12,7 +12,7 @@ def Distance(curr_cell, fin_cell):
     return dist
 
 
-maze, cell_list, startIdx, finIdx = getMaze('/openMaze.txt')
+maze, cell_list, startIdx, finIdx = getMaze('/bigMaze.txt')
 
 print maze
 stack = []
@@ -96,3 +96,5 @@ new_maze[stack[0]] = 'P'
 print '\n'
 maze_string = ''.join(new_maze)
 print maze_string
+file = open('testgreedy_big.txt', 'w')
+file.write(maze_string)
