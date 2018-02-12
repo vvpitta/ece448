@@ -10,7 +10,7 @@ def backtrace(parent, start, end):
     path.reverse
     return path
 
-maze, cell_list, startIdx, finIdx = getMaze('/openMaze.txt')
+maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/bigMaze.txt')
 
 print maze
 
@@ -95,10 +95,14 @@ for index in fin_path:
     new_maze[index] = '.'
 
 new_maze[fin_path[-1]] = 'P'
+
+path_cost = "\n" + "Path cost: " + str(len(fin_path)) + "\n"
+nodes_expanded = "Nodes expanded: " + str(len(marked))
 print '\n'
 maze_string = ''.join(new_maze)
-print maze_string
-file = open('testmazebfs_open.txt', 'w')
+print maze_string + path_cost + nodes_expanded
+maze_string = maze_string + path_cost + nodes_expanded
+file = open('bfs_big.txt', 'w')
 file.write(maze_string)
 ##print(new_maze[marked[len(marked)-1]])
 ##print(marked[len(marked)-1])
