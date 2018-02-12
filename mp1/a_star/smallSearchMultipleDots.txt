@@ -11,5 +11,5 @@
 %8% %%%    %  %   %% %% %%%%%%
 %          % 7%        D     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Cost of Path: 2254.0
-Nodes Expanded: 9187.0
+Cost of Path: 197.0
+Nodes Expanded: 429.0
