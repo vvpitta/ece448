@@ -1,5 +1,14 @@
 import heapq
 
+'''
+MinHeap class:
+    This class is designed to replicate a MinHeap using the heapq module.
+    The functionality includes:
+        isEmpty
+        Push
+        Pop
+'''
+
 class MinHeap:
     def __init__(self):
         self.data = []
