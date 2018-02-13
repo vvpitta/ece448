@@ -47,7 +47,7 @@ def backtrace(parent, start, end):
     path.reverse
     return path
 
-maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/openMaze.txt')
+maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/mediumMaze.txt')
 
 print maze
 parent = {}                                                         # Dict used to keep track of parent cells
@@ -58,10 +58,11 @@ marked = []                                                         # Marked is 
 marked.append(startIdx)
 curr_cell = startIdx
 fin_cell = cell_list[finIdx]
-
+expanded = 0
 
 while p_q != []:
     curr_cell = p_q.get()[1]                                         # Index of the cell with the closest distance to the goal
+    expanded += 1
 
     curr_cell_right = cell_list[cell_list[curr_cell].right]
     curr_cell_left = cell_list[cell_list[curr_cell].left]
@@ -144,11 +145,11 @@ new_maze[fin_path[-1]] = 'P'
 # Path cost is just the number of elements in fin_path. My algorithm considers the final element as part of the path
 path_cost = "\n" + "Path cost: " + str(len(fin_path)) + "\n"
 
-# Nodes expanded is just the number of elements visited, which is the length of the "marked" list
-nodes_expanded = "Nodes expanded: " + str(len(marked))
+# Nodes expanded is just the number of elements pushed off the frontier, which in our case is the priority queue
+nodes_expanded = "Nodes expanded: " + str(expanded)
 print '\n'
 maze_string = ''.join(new_maze)
 print maze_string + path_cost + nodes_expanded
 maze_string = maze_string + path_cost + nodes_expanded
-file = open('greedy_open.txt', 'w')
+file = open('greedy_medium.txt', 'w')
 file.write(maze_string)

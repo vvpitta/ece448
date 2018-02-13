@@ -11,7 +11,7 @@ DFS does not give the optimal path almost ever; rather it finds whether a path e
 from mclass import *
 from maze import *
 
-maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/bigMaze.txt')
+maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/openMaze.txt')
 
 print maze
 
@@ -20,6 +20,7 @@ stack.append(startIdx)
 marked = []                              # List to hold indices of visited cells, so we don't visit cells twice
 marked.append(startIdx)
 curr_cell = startIdx
+expanded = 1
 
 while stack != []:                        # Iterate through untill stack is empty (happens when there is no path from beginning to end)
 
@@ -73,6 +74,7 @@ while stack != []:                        # Iterate through untill stack is empt
     # If none of the moves are valid, pop the cell from the stack and go to the previous cell
     else:
         stack.pop()
+        expanded += 1
         curr_cell = stack[-1]
 
 new_maze = list(maze)
@@ -87,13 +89,13 @@ new_maze.append('\n')
 # Path cost is just the number of elements in the stack. My algoritm counts the final element as part of the path
 path_cost = "Path cost: " + str(len(stack)) + "\n"
 
-# Nodes expanded is just the number of elements visited, which is the length of the "marked" list
-nodes_expanded = "Nodes expanded: " + str(len(marked))
+# Nodes expanded is just the number of elements popped off the frontier, which is the stack in this case
+nodes_expanded = "Nodes expanded: " + str(expanded)
 
 
 print '\n'
 maze_string = ''.join(new_maze)
 maze_string = maze_string + path_cost + nodes_expanded
 print maze_string
-file = open('dfs_big.txt', 'w')
+file = open('dfs_open.txt', 'w')
 file.write(maze_string)

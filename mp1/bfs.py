@@ -27,10 +27,11 @@ def backtrace(parent, start, end):
     path.reverse
     return path
 
-maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/bigMaze.txt')
+maze, cell_list, startIdx, finIdx = getMaze('/inputMazes/openMaze.txt')
 
 print maze
 
+expanded = 0
 queue = deque([]) #queue that is used to store the neighboring nodes of the node being examined for later examination
 queue.append(startIdx)
 marked = []  # List to hold indices of visited cells so we don't visit the same cells twice
@@ -39,9 +40,11 @@ curr_cell = startIdx
 parent = {} #Dict used to keep track of parent cells
 while queue:
     curr_cell = queue.popleft() #remove the node whose neighbors we are examining from the queue
-    #Check to see if the neighbor is not a wall and the neighbor has not already been visited and the accordinly mark/update the required lists and
+    #Check to see if the neighbor is not a wall and the neighbor has not already been visited and the accordinly mark/update the required lists
+    expanded += 1
+
     if cell_list[cell_list[curr_cell].right].isWall == False and cell_list[cell_list[curr_cell].right].idx not in marked:
-        # if the neighbor is the solution update the required lists and dictionary for keep track of the baths and exit the while loo
+        # if the neighbor is the solution update the required lists and dictionary for keep track of the baths and exit the while loop
         if cell_list[cell_list[curr_cell].right].isSoln == True:
             right = cell_list[cell_list[curr_cell].right].idx
             parent[right] = curr_cell
@@ -103,11 +106,11 @@ new_maze[fin_path[-1]] = 'P'
 # Path cost is just the number of elements in fin_path. The algorithm considers the final element as part of the path
 path_cost = "\n" + "Path cost: " + str(len(fin_path)) + "\n"
 
-# Nodes expanded is just the number of elements visited, which is the length of the "marked" list
-nodes_expanded = "Nodes expanded: " + str(len(marked))
+# Nodes expanded is just the number of elements popped off the frontier, which in our case is the queue
+nodes_expanded = "Nodes expanded: " + str(expanded)
 print '\n'
 maze_string = ''.join(new_maze)
 print maze_string + path_cost + nodes_expanded
 maze_string = maze_string + path_cost + nodes_expanded
-file = open('bfs_big.txt', 'w')
+file = open('bfs_open.txt', 'w')
 file.write(maze_string)
