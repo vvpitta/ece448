@@ -13,3 +13,7 @@ class MinHeap:
     def pop(self):
         retval = heapq.heappop(self.data)
         return retval[1]
+    
+    def pop_tuple(self):
+        retval = heapq.heappop(self.data)
+        return retval
