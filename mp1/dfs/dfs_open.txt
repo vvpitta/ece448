@@ -19,4 +19,4 @@
 %     ....%                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Path cost: 192
-Nodes expanded: 419
+Nodes expanded: 228
