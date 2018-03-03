@@ -19,17 +19,13 @@ def milesGraph():
 
 def stepsGraph():
 
-    retVal = np.zeros((5, 5))
+    retVal = np.ones((5, 5))
 
-    retVal[0][1] = retVal[1][0] = 1
-    retVal[0][2] = retVal[2][0] = 1
-    retVal[0][3] = retVal[3][0] = 1
-    retVal[0][4] = retVal[4][0] = 1
-    retVal[1][2] = retVal[2][1] = 1
-    retVal[1][3] = retVal[3][1] = 1
-    retVal[1][4] = retVal[4][1] = 1
-    retVal[2][3] = retVal[3][2] = 1
-    retVal[2][4] = retVal[4][2] = 1
-    retVal[3][4] = retVal[4][3] = 1
+    for x in range(retVal.shape[0]):
+        for y in range(retVal.shape[1]):
+            if x == y:
+                retVal[x][y] = 0
 
     return retVal
+
+print stepsGraph()
