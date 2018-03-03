@@ -15,4 +15,4 @@ def generateGraph():
     retVal[2][4] = retVal[4][2] = 399
     retVal[3][4] = retVal[4][3] = 387
 
-    return
+    return retVal
