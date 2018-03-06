@@ -27,5 +27,3 @@ def stepsGraph():
                 retVal[x][y] = 0
 
     return retVal
-
-print stepsGraph()

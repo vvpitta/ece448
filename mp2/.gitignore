@@ -1,2 +1,3 @@
 .ipynb_checkpoints/
 river.py
+*.pyc
