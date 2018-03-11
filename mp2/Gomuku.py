@@ -98,16 +98,15 @@ class Gomuku:
                                 if pcount == 2:
                                         self.count[0][0] = self.count[0][0] - 1
                 
-                
+		
                 ##to find diagonal
                 ##Use slope = 1 and slope = -1 to determine points, rely on isoceles triangle rule
-                ## Find if connect 5 can exist on diagonal if so then traverse diagonal
-                
+                ##Find if connect 5 window can exist on diagonal if so then traverse diagonal
                 ##posxintercept = int((1*(i)) + j)
                                 
      
 	
-	def upateBoard(i,j, ply):
+	def upateBoard(self, i, j, ply):
 		if ply = 0 and self.board[i][j] == '.':
 			self.board[i][j] = self.pOne[0]
 			self.pOne.pop(0)
@@ -123,38 +122,38 @@ class Gomuku:
 ##class MinMax:
 		
 	def evaluate(game, ply):
-                  if game.ko == True and winner == ply:
+              	'''if game.ko == True and winner == ply:
                        return 
                 elif game.ko == True:
-                       return -1*math.inf
-                else:
-                        return (game.count[ply][0] * 1) + (game.count[ply][1] * 2)  + (game.count[ply][2] * 3) + (game.count[ply][3] * 4) 
+                       return -1*math.inf 
+                else:'''
+        	return (game.count[ply][0] * 1) + (game.count[ply][1] * 2)  + (game.count[ply][2] * 3) + (game.count[ply][3] * 4) 
                                         
 	def miniMax(game, move, ply):
                 if move == 0 and ply == 0
-                        return 3,3
-                        
+                        return 3,3 
                 else:
-                        move = getNextMove(0, game, True, False, ply)
+                        move = getNextMove(0, game, True, False, ply, -1, -1)
                         return move[0], move[1]
                         
-	
 	def isValid(x, y, game):
 		if game.board[x][y] == '.':
 			return True
 		return False
-		
-	def getNextMove(depth, game, agent, opp, ply, x, y):
-		##gamecopy = game
-		##if game is over return -inf or +inf based on if agent or opp --> do I need to do this
-                if game.ko = True and game.winner = ply
-                        return [0,0,+1000000000000]
-                elif game.ko = True
-                        return [0,0,-1000000000000]
+	
+	expandedNodesMinMax = 0
+	
+	def getNextMove(depth, game, agent, ply, x, y):
+                if game.ko == True and agent:
+                        return [x,y,1000000000000]
+                elif game.ko == True : 
+                        return [x,y,-1000000000000]
 		if depth == 3:
-			return evaluate(game, ply)
-                choicesAgent = [0,0,-1000000000000] ## x,y (move), value of move
-		choicesOpp = [0,0,+1000000000000]
+			return [x,y,evaluate(game, ply)]
+                ## keeping track of the best move so far for the agent and the opposition
+		expandedNodesMinMax = expandedNodesMinMax + 1 ##Does this make sense for expanded nodes, because each time we recurse through we expand a node
+		choicesAgent = [-1,-1,-1000000000000] ## x,y (move), value of move
+		choicesOpp = [-1,-1,1000000000000]
 		if agent:
 			for i in range(7):
 				for j in range(7):
@@ -162,20 +161,27 @@ class Gomuku:
 					gamecopy.copycat(game)
 					if isValid(i,j, gamecopy):
 						gamecopy.upateBoard(i,j, ply)
-						maxmoves = getNextMove(depth+1, gamecopy, False, True)
+						if ply == 0
+							maxmoves = getNextMove(depth+1, gamecopy, False, 1, i, j)
+						else:
+							maxmoves = getNextMove(depth+1, gamecopy, False, 0, i, j)
 						if maxmoves[2] > choicesAgent[2]:
 							choicesAgent[0] = i
 							choicesAgent[1] = j
-		if opp:
+		else:
 			for i in range(7):
 				for j in range(7):
 					gamecopy = game
 					if isValid(i,j, gamecopy):
 						gamecopy.upateBoard(i,j, agent, ply)
-						minmoves = getNextMove(depth+1, gamecopy, True, False)
+						if ply == 0
+							minmoves = getNextMove(depth+1, gamecopy, True, 1, i, j)
+						else:
+							minmoves = getNextMove(depth+1, gamecopy, True, 0, i, j)
 						if minmoves[2] < choicesOpp[2]:
 							choicesOpp[0] = i
 							choicesOpp[1] = j
+		## it should only reach this return statement after the evaluation of the entire tree
 		return choicesAgent
 		
 			
@@ -185,17 +191,18 @@ class Gomuku:
                 else:
 			alpha = [-1,-1,1000000000000]
 			beta = [-1,-1,-1000000000000]
-                        getNextMoveAlphaBeta (0, game, True, ply, -1000000000000, +1000000000000)
+                        getNextMoveAlphaBeta (0, game, True, ply, -1000000000000, +1000000000000, -1, -1)
 
-
+	expandedNodesAlphaBeta = 0
         def getNextMoveAlphaBeta (depth, game, agent, ply, alpha, beta, x, y)  ## alpha [-1,-1, -inf] and beta [-1,-1, +inf]
-                if game.ko = True and game.winner = ply
+                if game.ko == True and agent == True : 
                         return [x,y,1000000000000]##math.inf +ve inf
-                elif game.ko = True
+                elif game.ko == True:
                         return [x,y,-1000000000000]##-ve inf   -1*float(math. 
 		if depth == 3:
 			return [x,y,evaluate(game, ply)]
-                if agent:
+                expandedNodesAlphaBeta = expandedNodesAlphaBeta + 1
+		if agent:
 			best = [-1,-1,-1000000000000] ##(-100,000,000,000)
                         for i in range(7):
 				doublebreak = False
@@ -242,7 +249,7 @@ class Gomuku:
 					      break
 			return best
 					      
-					  
+	def playGame()
 					 
 					      
 					      
