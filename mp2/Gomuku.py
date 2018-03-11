@@ -103,7 +103,7 @@ class Gomuku:
                 ##Use slope = 1 and slope = -1 to determine points, rely on isoceles triangle rule
                 ## Find if connect 5 can exist on diagonal if so then traverse diagonal
                 
-                posxintercept = int((1*(i)) + j)
+                ##posxintercept = int((1*(i)) + j)
                                 
      
 	
@@ -120,12 +120,7 @@ class Gomuku:
 			##self.steps[1] = self.steps[1] + 1
                         self.winCount(i,j)
 			
-		
-
-
-
-		
-##class MinMax{
+##class MinMax:
 		
 	def evaluate(game, ply):
                   if game.ko == True and winner == ply:
@@ -149,26 +144,26 @@ class Gomuku:
 			return True
 		return False
 		
-	def getNextMove(depth, game, agent, opp, ply):
+	def getNextMove(depth, game, agent, opp, ply, x, y):
 		##gamecopy = game
 		##if game is over return -inf or +inf based on if agent or opp --> do I need to do this
                 if game.ko = True and game.winner = ply
-                        return ##math.inf +ve inf
+                        return [0,0,+1000000000000]
                 elif game.ko = True
-                        return ##-ve inf   -1*float(math. 
+                        return [0,0,-1000000000000]
 		if depth == 3:
 			return evaluate(game, ply)
-                choicesAgent = [0,0,-math.inf] ## x,y (move), value of move
-		choicesOpp = [0,0,math.inf]
+                choicesAgent = [0,0,-1000000000000] ## x,y (move), value of move
+		choicesOpp = [0,0,+1000000000000]
 		if agent:
 			for i in range(7):
 				for j in range(7):
 					gamecopy = Gomuku()
 					gamecopy.copycat(game)
 					if isValid(i,j, gamecopy):
-						gamecopy.upateBoard(i,j,agent, opp)
-						maxmoves = (getNextMove(depth+1, gamecopy, False, True)
-						if maxmoves > choicesAgent[2]:
+						gamecopy.upateBoard(i,j, ply)
+						maxmoves = getNextMove(depth+1, gamecopy, False, True)
+						if maxmoves[2] > choicesAgent[2]:
 							choicesAgent[0] = i
 							choicesAgent[1] = j
 		if opp:
@@ -176,9 +171,9 @@ class Gomuku:
 				for j in range(7):
 					gamecopy = game
 					if isValid(i,j, gamecopy):
-						gamecopy.upateBoard(i,j, agent, opp)
+						gamecopy.upateBoard(i,j, agent, ply)
 						minmoves = getNextMove(depth+1, gamecopy, True, False)
-						if minmoves < choicesOpp[2]:
+						if minmoves[2] < choicesOpp[2]:
 							choicesOpp[0] = i
 							choicesOpp[1] = j
 		return choicesAgent
@@ -188,25 +183,71 @@ class Gomuku:
                 if move == 0 and ply == 0
                         return 3,3
                 else:
-                        getNextMoveAlphaBeta (0, game, True, ply, ##-infinity, +infinity)
+			alpha = [-1,-1,1000000000000]
+			beta = [-1,-1,-1000000000000]
+                        getNextMoveAlphaBeta (0, game, True, ply, -1000000000000, +1000000000000)
 
 
-        def getNextMoveAlphaBeta (depth, value, game, agent, opp, ply, alpha, beta)
+        def getNextMoveAlphaBeta (depth, game, agent, ply, alpha, beta, x, y)  ## alpha [-1,-1, -inf] and beta [-1,-1, +inf]
                 if game.ko = True and game.winner = ply
-                        return ##math.inf +ve inf
+                        return [x,y,1000000000000]##math.inf +ve inf
                 elif game.ko = True
-                        return ##-ve inf   -1*float(math. 
+                        return [x,y,-1000000000000]##-ve inf   -1*float(math. 
 		if depth == 3:
-			return evaluate(game, ply)
-                
+			return [x,y,evaluate(game, ply)]
                 if agent:
+			best = [-1,-1,-1000000000000] ##(-100,000,000,000)
                         for i in range(7):
+				doublebreak = False
                                 for j in range(7):
                                         gamecopy = Gomuku()
                                         gamecopy.copycat(game)
                                         if isValid(i,j, gamecopy):
-                                              gamecopy.updateboard(i,j, agent, opp)
-                                              value = 
+                                              gamecopy.updateBoard(i,j, ply)
+					      if ply == 0:
+                                              	value = getNextMoveAlphaBeta(depth+1, gamecopy, False, 1, alpha, beta i, j)
+					      else:
+	                       			value = getNextMoveAlphaBeta(depth+1, gamecopy, False, 0, alpha, beta i, j)
+					if value[2] >= best[2]:
+					     best = value
+					if best[2] >= alpha[2]:
+					      alpha = best
+					if beta[2] <= alpha[2]:
+					      doublebreak = True
+					      break
+				if doublebreak:
+					      break
+			return best
+		else:
+			best = [-1,-1,1000000000000] ##(-100,000,000,000)
+                	for i in range(7):
+				doublebreak = False
+                                for j in range(7):
+                                        gamecopy = Gomuku()
+                                        gamecopy.copycat(game)
+                                        if isValid(i,j, gamecopy):
+                                              gamecopy.updateBoard(i,j, ply)
+					      if ply == 0:
+                                              	value = getNextMoveAlphaBeta(depth+1, gamecopy, True, 1, alpha, beta, i, j)
+					      else:
+	                       			value = getNextMoveAlphaBeta(depth+1, gamecopy, True, 0, alpha, beta, i, j)
+					if value[2] <= best[2]:
+					     best = value
+					if best[2] <= alpha[2]:
+					      alpha = best
+					if beta[2] <= alpha[2]:
+					      doublebreak = True
+					      break
+				if doublebreak:
+					      break
+			return best
+					      
+					  
+					 
+					      
+					      
+					      
+
                                               
                                               
                                                                                                             
