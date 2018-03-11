@@ -34,8 +34,9 @@ class Gomuku:
                                 check = x + b
                                 if board.[check][j].islower():
                                         wcount = wcount + 1
+					pcount = 0
                                 elif board.[check][j].isupper():
-                                        wcount = -1
+                                        wcount = 0
                                         pcount = pcount + 1
                         if wcount == 5:
                                 self.ko = True
@@ -69,11 +70,11 @@ class Gomuku:
                                 check = y + b
                                 if board.[i][check].islower():
                                         wcount = wcount + 1
-                                        pcount = -1
+                                        pcount = 0
                                 elif board.[check][j].isupper():
-                                        wcount = -1
+                                        wcount = 0
                                         pcount = pcount + 1
-                         if wcount == 5:
+                        if wcount == 5:
                                 self.ko = True
                                 self.winner = 0
                                 return
@@ -98,9 +99,180 @@ class Gomuku:
                                 if pcount == 2:
                                         self.count[0][0] = self.count[0][0] - 1
                 
-		posxintercept = i-j
-		negxintercept = j+i
+		xreal = i
+		yreal = -1*j
+		posxint = xreal - yreal
+		negxint = yreal + xreal
+		ycordposxint = 0
+		ycordnegxint = 0
 		
+		if posxint > 6:
+			ycordposxint = xint - 6
+		if negxint < 0:
+			ycordnegxint = -1*negxint
+		
+		if posxint <= 6 and posxint > 3:
+			lim = posxint - 3
+			for q in range(lim):
+				wcount = 0
+				pcount = 0
+				x1 = posxint - q
+				y1 = ycordposxint + q
+				for b in range(5):
+					x2 = x1 - b
+					y2 = y1 + b
+					if board.[x2][y2].islower():
+                                       		wcount = wcount + 1
+                                        	pcount = 0
+                                	elif board.[x2][y2].isupper():
+                                        	wcount = 0
+                                        	pcount = pcount + 1
+                        if wcount == 5:
+                                self.ko = True
+                                self.winner = 0
+                                return
+                        if pcount == 5:
+                                self.ko = True
+                                self.winner = 1
+                                return
+			if wcount > 0:
+				self.count[0][wcount-1] = self.count[0][wcount-1] + 1
+				if wcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if wcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if wcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
+			if pcount > 0:
+                                self.count[1][pcount-1] = self.count[ply+1][pcount-1] + 1
+                                if pcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if pcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if pcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
+		elif ycordposxint < 3 and ycordposxint > 0 :
+			lim = 3 - ycordposxint
+			for q in range(lim):
+				wcount = 0
+				pcount = 0
+				x1 = posxint - q
+				y1 = ycordposxint + q
+				for b in range(5):
+					x2 = x1 - b
+					y2 = y1 + b
+					if board.[x2][y2].islower():
+                                       		wcount = wcount + 1
+                                        	pcount = 0
+                                	elif board.[x2][y2].isupper():
+                                        	wcount = 0
+                                        	pcount = pcount + 1
+                        if wcount == 5:
+                                self.ko = True
+                                self.winner = 0
+                                return
+                        if pcount == 5:
+                                self.ko = True
+                                self.winner = 1
+                                return
+			if wcount > 0:
+				self.count[0][wcount-1] = self.count[0][wcount-1] + 1
+				if wcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if wcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if wcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
+			if pcount > 0:
+                                self.count[1][pcount-1] = self.count[ply+1][pcount-1] + 1
+                                if pcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if pcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if pcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1	
+		
+		if negxint < 3 and negxint >= 0 :
+			lim = 3 - negxint
+			for q in range(lim):
+				wcount = 0
+				pcount = 0
+				x1 = negxint + q
+				y1 = ycordposxint + q
+				for b in range(5):
+					x2 = x1 + b
+					y2 = y1 + b
+					if board.[x2][y2].islower():
+                                       		wcount = wcount + 1
+                                        	pcount = 0
+                                	elif board.[x2][y2].isupper():
+                                        	wcount = 0
+                                        	pcount = pcount + 1
+                        if wcount == 5:
+                                self.ko = True
+                                self.winner = 0
+                                return
+                        if pcount == 5:
+                                self.ko = True
+                                self.winner = 1
+                                return
+			if wcount > 0:
+				self.count[0][wcount-1] = self.count[0][wcount-1] + 1
+				if wcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if wcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if wcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
+			if pcount > 0:
+                                self.count[1][pcount-1] = self.count[ply+1][pcount-1] + 1
+                                if pcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if pcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if pcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
+		
+		elif ycordnegxint > 0 and ycordnegxint < 3:
+			lim = 3 - ycordnegxint
+			for q in range(lim):
+				wcount = 0
+				pcount = 0
+				x1 = negxint + q
+				y1 = ycordposxint + q
+				for b in range(5):
+					x2 = x1 + b
+					y2 = y1 + b
+					if board.[x2][y2].islower():
+                                       		wcount = wcount + 1
+                                        	pcount = 0
+                                	elif board.[x2][y2].isupper():
+                                        	wcount = 0
+                                        	pcount = pcount + 1
+                        if wcount == 5:
+                                self.ko = True
+                                self.winner = 0
+                                return
+                        if pcount == 5:
+                                self.ko = True
+                                self.winner = 1
+                                return
+			if wcount > 0:
+				self.count[0][wcount-1] = self.count[0][wcount-1] + 1
+				if wcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if wcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if wcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
+			if pcount > 0:
+                                self.count[1][pcount-1] = self.count[ply+1][pcount-1] + 1
+                                if pcount == 4:
+                                        self.count[0][2] = self.count[0][2] - 1
+                                if pcount == 3:
+                                        self.count[0][1] = self.count[0][1] - 1
+                                if pcount == 2:
+                                        self.count[0][0] = self.count[0][0] - 1
 		'''
 		-1*(i-0) = j - y
 		-i = j
@@ -141,7 +313,7 @@ class Gomuku:
                 if move == 0 and ply == 0
                         return 3,3 
                 else:
-                        move = getNextMove(0, game, True, False, ply, -1, -1)
+                        move = getNextMove(0, game, True, ply, -1, -1)
                         return move[0], move[1]
                         
 	def isValid(x, y, game):
@@ -193,14 +365,15 @@ class Gomuku:
 		return choicesAgent
 		
 			
-	def alphaBeta(game, move, ply):
+	def alphaBeta(game, ply):
                 if move == 0 and ply == 0
                         return 3,3
                 else:
 			alpha = [-1,-1,1000000000000]
 			beta = [-1,-1,-1000000000000]
-                        getNextMoveAlphaBeta (0, game, True, ply, -1000000000000, +1000000000000, -1, -1)
-
+                      	move = getNextMoveAlphaBeta (0, game, True, ply, -1000000000000, +1000000000000, -1, -1)
+			return move[0], move[1]
+		
 	expandedNodesAlphaBeta = 0
         def getNextMoveAlphaBeta (depth, game, agent, ply, alpha, beta, x, y)  ## alpha [-1,-1, -inf] and beta [-1,-1, +inf]
                 if game.ko == True and agent == True : 
@@ -257,8 +430,31 @@ class Gomuku:
 					      break
 			return best
 					      
-	def playGame()
-					 
+	actualgame = Gomuku()
+	step = 1
+	while actualgame.ko != True and step < 50 :
+		mx1,my1 = minimax (actualgame,0)
+		actualgame.updateBoard (mx1,my1, 0)
+		print step + " MinMax:" + expandedNodesMinMax
+		print
+		expandedNodesMinMax = 0
+		mx2, my2 = alphaBeta (actualgame, 1)
+		actualgame.updateBoard (mx2, yx2, 0)
+		expandedNodesAlphaBeta = 0 
+		print step + " AlphaBeta:" + expandedNodesAlphaBeta
+		print
+		step = step + 1
+	
+	print "Winner:" + actualgame.winner
+	for r in range(len(actualgame.board)):
+		for c in range(len(actualgame.board[r])):
+			print(actualgame.board[i][j], end='')
+		print
+	
+		
+	
+	
+	
 					      
 					      
 					      
