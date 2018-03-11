@@ -98,7 +98,15 @@ class Gomuku:
                                 if pcount == 2:
                                         self.count[0][0] = self.count[0][0] - 1
                 
+		posxintercept = i-j
+		negxintercept = j+i
 		
+		'''
+		-1*(i-0) = j - y
+		-i = j
+		x = j+i
+		
+		'''
                 ##to find diagonal
                 ##Use slope = 1 and slope = -1 to determine points, rely on isoceles triangle rule
                 ##Find if connect 5 window can exist on diagonal if so then traverse diagonal
