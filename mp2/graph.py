@@ -1,4 +1,5 @@
 import numpy as np
+from minHeapClass import *
 
 def milesGraph():
 
@@ -17,13 +18,70 @@ def milesGraph():
 
     return retVal
 
-def stepsGraph():
+def shortestGraphChildren(current):
 
-    retVal = np.ones((5, 5))
+    children = []
+    for i in range(5):
+        if i == current:
+            continue
+        children.append(i)
 
-    for x in range(retVal.shape[0]):
-        for y in range(retVal.shape[1]):
+    return children
+
+def dijkstra(start, goal):
+
+    distances = milesGraph()
+    openList = MinHeap()
+    gn = {}
+    path = {}
+
+    openList.push(start, 0)
+    gn[start] = 0
+    path[start] = None
+
+    while not openList.isEmpty():
+        current = openList.pop()
+
+        if current == goal:
+            break
+
+        successors = shortestGraphChildren(current)
+        for child in successors:
+            newG = gn[current] + distances[current][child]
+            if child not in gn or newG < gn[child]:
+                gn[child] = newG
+                path[child] = current
+                fn = newG + 0
+                openList.push(child, fn)
+
+    reversePath = []
+    current = goal
+    while current != start:
+        reversePath.append(current)
+        current = path[current]
+    reversePath = reversePath[::-1]
+
+    minDist = 0
+    i = 0
+    minDist += distances[start][reversePath[0]]
+    while (i+1 != len(reversePath)):
+        minDist += distances[reversePath[i]][reversePath[i+1]]
+        i += 1
+
+    return minDist, reversePath
+
+def shortestGraph():
+
+    distances = milesGraph()
+    actualPaths = {}
+
+    for x in range(distances.shape[0]):
+        for y in range(distances.shape[1]):
             if x == y:
-                retVal[x][y] = 0
+                continue
+            dijkPath, path = dijkstra(x, y)
+            actualPaths[(x, y)] = path
+            if dijkPath < distances[x][y]:
+                distances[x][y] = dijkPath
 
-    return retVal
+    return distances, actualPaths
