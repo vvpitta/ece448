@@ -227,32 +227,32 @@ def reflex(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, curren
                                 return minimax_setup(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, (p2_idx+1), current ='minimax', opponent ='reflex')
                 return boardCells
 
-# p1_moves = list(string.ascii_lowercase)
-# p2_moves = list(string.ascii_uppercase)
-# p1_idx = 1
-# p2_idx = 1
-#
-# board, boardCells = initBoard()
-#
-# boardCells[(1,1)].set_char(p1_moves[0])
-# boardCells[(5,5)].set_char(p2_moves[0])
-#
-# for x in range(7):
-#     for y in range(7):
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#
-# board_string = ''.join(board)
-# print board_string
-#
-# boardCells = reflex(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, p2_idx, 'reflex', 'reflex')
-#
-# for x in range(7):
-#     for y in range(7):
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#
-# board_string = ''.join(board)
-# print board_string
-# file = open('r_agent.txt', 'w')
-# file.write(board_string)
+p1_moves = list(string.ascii_lowercase)
+p2_moves = list(string.ascii_uppercase)
+p1_idx = 1
+p2_idx = 1
+
+board, boardCells = initBoard()
+
+boardCells[(1,1)].set_char(p1_moves[0])
+boardCells[(5,5)].set_char(p2_moves[0])
+
+for x in range(7):
+    for y in range(7):
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+
+board_string = ''.join(board)
+print board_string
+
+boardCells = reflex(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, p2_idx, 'reflex', 'reflex')
+
+for x in range(7):
+    for y in range(7):
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+
+board_string = ''.join(board)
+print board_string
+file = open('r_agent.txt', 'w')
+file.write(board_string)

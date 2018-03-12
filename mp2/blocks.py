@@ -431,7 +431,7 @@ def winning_blocks_diagl(boardCells, player):
         count = 0
         invalid = False
         for i in range(y-4, y+1):
-            if boardCells[(4-i,i)].char == (boardCells[(4-i,i)].char.upper()):
+            if boardCells[(4-i,i)].char in p2_moves:
                 invalid = True
                 break
             elif boardCells[(4-i,i)].char != '.':
@@ -458,7 +458,7 @@ def winning_blocks_diagl(boardCells, player):
             count = 0
             invalid = False
             for i in range(y-4, y+1):
-                if boardCells[(5-i,i)].char == (boardCells[(5-i,i)].char.upper()):
+                if boardCells[(5-i,i)].char in p2_moves:
                     invalid = True
                     break
                 elif boardCells[(5-i,i)].char != '.':
@@ -485,7 +485,7 @@ def winning_blocks_diagl(boardCells, player):
             count = 0
             invalid = False
             for i in range(y-4, y+1):
-                if boardCells[(6-i,i)].char == (boardCells[(6-i,i)].char.upper()):
+                if boardCells[(6-i,i)].char in p2_moves:
                     invalid = True
                     break
                 elif boardCells[(6-i,i)].char != '.':
@@ -512,7 +512,7 @@ def winning_blocks_diagl(boardCells, player):
             count = 0
             invalid = False
             for i in range(y-4, y+1):
-                if boardCells[(7-i,i)].char == (boardCells[(7-i,i)].char.upper()):
+                if boardCells[(7-i,i)].char in p2_moves:
                     invalid = True
                     break
                 elif boardCells[(7-i,i)].char != '.':
@@ -539,7 +539,7 @@ def winning_blocks_diagl(boardCells, player):
         count = 0
         invalid = False
         for i in range(y-4, y+1):
-            if boardCells[(8-i,i)].char == (boardCells[(8-i,i)].char.upper()):
+            if boardCells[(8-i,i)].char in p2_moves:
                 invalid = True
                 break
             elif boardCells[(8-i,i)].char != '.':
@@ -567,7 +567,7 @@ def winning_blocks_diagl(boardCells, player):
         count = 0
         invalid = False
         for i in range(y-4, y+1):
-            if boardCells[(4-i,i)].char != (boardCells[(4-i,i)].char.upper()):
+            if boardCells[(4-i,i)].char in p1_moves:
                 invalid = True
                 break
             elif boardCells[(4-i,i)].char != '.':
@@ -594,7 +594,7 @@ def winning_blocks_diagl(boardCells, player):
             count = 0
             invalid = False
             for i in range(y-4, y+1):
-                if boardCells[(5-i,i)].char != (boardCells[(5-i,i)].char.upper()):
+                if boardCells[(5-i,i)].char in p1_moves:
                     invalid = True
                     break
                 elif boardCells[(5-i,i)].char != '.':
@@ -621,7 +621,7 @@ def winning_blocks_diagl(boardCells, player):
             count = 0
             invalid = False
             for i in range(y-4, y+1):
-                if boardCells[(6-i,i)].char != (boardCells[(6-i,i)].char.upper()):
+                if boardCells[(6-i,i)].char in p1_moves:
                     invalid = True
                     break
                 elif boardCells[(6-i,i)].char != '.':
@@ -648,7 +648,7 @@ def winning_blocks_diagl(boardCells, player):
             count = 0
             invalid = False
             for i in range(y-4, y+1):
-                if boardCells[(7-i,i)].char != (boardCells[(7-i,i)].char.upper()):
+                if boardCells[(7-i,i)].char in p1_moves:
                     invalid = True
                     break
                 elif boardCells[(7-i,i)].char != '.':
@@ -675,7 +675,7 @@ def winning_blocks_diagl(boardCells, player):
         count = 0
         invalid = False
         for i in range(y-4, y+1):
-            if boardCells[(8-i,i)].char != (boardCells[(8-i,i)].char.upper()):
+            if boardCells[(8-i,i)].char in p1_moves:
                 invalid = True
                 break
             elif boardCells[(8-i,i)].char != '.':
