@@ -1,7 +1,10 @@
 from blocks import *
 from board import *
 from boardClass import *
+from tree import *
 import string
+import copy
+import time
 
 global current
 global opponent
@@ -227,32 +230,138 @@ def reflex(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, curren
                                 return minimax_setup(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, (p2_idx+1), current ='minimax', opponent ='reflex')
                 return boardCells
 
-# p1_moves = list(string.ascii_lowercase)
-# p2_moves = list(string.ascii_uppercase)
-# p1_idx = 1
-# p2_idx = 1
-#
-# board, boardCells = initBoard()
-#
-# boardCells[(1,1)].set_char(p1_moves[0])
-# boardCells[(5,5)].set_char(p2_moves[0])
-#
-# for x in range(7):
-#     for y in range(7):
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#
-# board_string = ''.join(board)
-# print board_string
-#
-# boardCells = reflex(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, p2_idx, 'reflex', 'reflex')
-#
-# for x in range(7):
-#     for y in range(7):
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
-#
-# board_string = ''.join(board)
-# print board_string
-# file = open('r_agent.txt', 'w')
-# file.write(board_string)
+def eval_fn(boardCells, coord, player):
+    best_count_player, winning_blocks_player = winning_blocks(boardCells, player)
+    winning_blocks_coord = [block for block in winning_blocks_player if coord in block]
+    potential = 0
+    count = 0
+    for block in winning_blocks_coord:
+        for coords in block:
+            if boardCells[coords].char != '.':
+                count += 1
+        potential += count
+        count = 0
+    return (coord, potential)
+
+def minimax(first_moves, player):
+    max_val = 0
+    min_val = 0
+    max_vals = []
+    for node in first_moves:
+        min_vals = []
+        for dep2 in node.children:
+            potentials = []
+            for dep3 in dep2.children:
+                potentials.append(eval_fn(dep3.boardCells, (dep3.x, dep3.y), player))
+            min_vals.append(max(potentials, key=lambda x: x[1]))
+        max_vals.append(min(min_vals, key=lambda x: x[1]))
+
+    return max(max_vals, key=lambda x:x[1])[0]
+
+
+
+def minimax_setup(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, current, opponent):
+    if p1_idx == 0 and p2_idx == 0:
+        boardCells[(3,3)].set_char(p1_moves[p1_idx])
+        board[boardCells[(3,3)].idx] = boardCells[(3,3)].char
+        board_string = ''.join(board)
+        print board_string
+        if current == 'minimax' and opponent == 'reflex':
+            return reflex(boardCells, board, 'blue', p1_moves, p2_moves, (p1_idx+1), p2_idx, current ='reflex', opponent ='minimax')
+    first_moves = []
+    if player == 'red':
+        start_time = time.time()
+        for x in range(7):
+            for y in range(7):
+                dep1_boardCells = copy.deepcopy(boardCells)
+                if dep1_boardCells[(x,y)].char == '.':
+                    dep1_boardCells[(x,y)].set_char(p1_moves[p1_idx])
+                    dep1_node = tree(dep1_boardCells, x, y, 1)
+                    for i in range(7):
+                        for j in range(7):
+                            dep2_boardCells = copy.deepcopy(dep1_boardCells)
+                            if dep2_boardCells[(i,j)].char == '.':
+                                dep2_boardCells[(i,j)].set_char(p2_moves[p2_idx])
+                                dep2_node = tree(dep2_boardCells, i, j, 2)
+                                for k in range(7):
+                                    for l in range(7):
+                                        dep3_boardCells = copy.deepcopy(dep2_boardCells)
+                                        if dep3_boardCells[(k,l)].char == '.':
+                                            dep3_boardCells[(k,l)].set_char(p1_moves[p1_idx+1])
+                                            dep3_node = tree(dep3_boardCells, k, l, 3)
+                                            dep2_node.children_append(dep3_node)
+                                dep1_node.children_append(dep2_node)
+                    first_moves.append(dep1_node)
+        next_move = minimax(first_moves, 'red')
+        boardCells[next_move].set_char(p1_moves[p1_idx])
+        board[boardCells[next_move].idx] = boardCells[next_move].char
+        board_string = ''.join(board)
+        print board_string
+        elapsed_time = time.time() - start_time
+        print elapsed_time
+        best_count, winning_blocks_red = winning_blocks(boardCells, 'red')
+        if best_count[0][0] == 5:
+            return boardCells
+        else:
+            if current == 'minimax' and opponent == 'reflex':
+                return reflex(boardCells, board, 'blue', p1_moves, p2_moves, (p1_idx+1), p2_idx, current ='reflex', opponent ='minimax')
+
+    else:
+        for x in range(7):
+            for y in range(7):
+                dep1_boardCells = boardCells.copy()
+                if dep1_boardCells[(x,y)].char == '.':
+                    dep1_boardCells[(x,y)].set_char(p2_moves[p2_idx])
+                    dep1_node = tree(dep1_boardCells, 1)
+                    for i in range(7):
+                        for j in range(7):
+                            dep2_boardCells = dep1_boardCells.copy()
+                            if dep2_boardCells[(i,j)].char == '.':
+                                dep2_boardCells[(i,j)].set_char(p1_moves[p1_idx])
+                                dep2_node = tree(dep2_boardCells, 2)
+                                for k in range(7):
+                                    for l in range(7):
+                                        dep3_boardCells = dep2_boardCells.copy()
+                                        if dep3_boardCells[(k,l)].char == '.':
+                                            dep3_boardCells[(k,l)].set_char(p2_moves[p2_idx+1])
+                                            dep3_node = tree(dep3_boardCells, 3)
+                                            dep2_node.children_append(dep3_node)
+                                dep1_node.children_append(dep2_node)
+                    first_moves.append(dep1_node)
+        next_move = minimax(first_moves, 'blue')
+        boardCells[next_move].set_char(p2_moves[p2_idx])
+        board[boardCells[next_move].idx] = boardCells[next_move].char
+        board_string = ''.join(board)
+        print board_string
+        best_count, winning_blocks_blue = winning_blocks(boardCells, 'blue')
+        print best_count[0][0]
+        if best_count[0][0] == 5:
+            return boardCells
+        else:
+            if current == 'minimax' and opponent == 'reflex':
+                return reflex(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, (p2_idx+1), current = 'reflex', opponent ='minimax')
+
+
+p1_moves = list(string.ascii_lowercase)
+p2_moves = list(string.ascii_uppercase)
+p1_idx = 0
+p2_idx = 0
+
+board, boardCells = initBoard()
+
+for x in range(7):
+    for y in range(7):
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+
+boardCells = minimax_setup(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, p2_idx, current ='minimax', opponent='reflex')
+
+for x in range(7):
+    for y in range(7):
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+        board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
+
+board_string = ''.join(board)
+print board_string
+file = open('rm_agent.txt', 'w')
+file.write(board_string)
