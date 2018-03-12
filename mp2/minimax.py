@@ -241,24 +241,40 @@ def eval_fn(boardCells, coord, player):
                 count += 1
         potential += count
         count = 0
-    return (coord, potential)
+    return potential
+
+def minimum(nodes):
+    min_val = 10000000000000
+    for node in nodes:
+        if node.value < min_val:
+            min_val = node.value
+
+    return min_val
+
+def maximum(nodes):
+    max_val = 0
+    for node in nodes:
+        if node.vaue > max_val:
+            max_val = node.value
+    return max_val
 
 def minimax(first_moves, player):
     max_val = 0
     min_val = 0
     max_vals = []
-    for node in first_moves:
-        min_vals = []
-        for dep2 in node.children:
-            potentials = []
+    for dep1 in first_moves:
+        for dep2 in dep1.children:
             for dep3 in dep2.children:
-                potentials.append(eval_fn(dep3.boardCells, (dep3.x, dep3.y), player))
-            min_vals.append(max(potentials, key=lambda x: x[1]))
-        max_vals.append(min(min_vals, key=lambda x: x[1]))
+                dep3.set_value(eval_fn(dep3.boardCells, (dep3.x, dep3.y), player))
+            dep2.set_value(maximum(dep2.children))
+        dep1.set_value(minimum(dep1.children))
 
-    return max(max_vals, key=lambda x:x[1])[0]
+    for node in first_moves:
+        if node.value > max_val:
+            max_val = node.value
+            ret_node = node
 
-
+    return (ret_node.x, ret_node.y)
 
 def minimax_setup(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, current, opponent):
     if p1_idx == 0 and p2_idx == 0:
@@ -273,22 +289,23 @@ def minimax_setup(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx,
         start_time = time.time()
         for x in range(7):
             for y in range(7):
+                print (x,y)
                 dep1_boardCells = copy.deepcopy(boardCells)
                 if dep1_boardCells[(x,y)].char == '.':
                     dep1_boardCells[(x,y)].set_char(p1_moves[p1_idx])
-                    dep1_node = tree(dep1_boardCells, x, y, 1)
+                    dep1_node = tree(dep1_boardCells, x, y, 0)
                     for i in range(7):
                         for j in range(7):
                             dep2_boardCells = copy.deepcopy(dep1_boardCells)
                             if dep2_boardCells[(i,j)].char == '.':
                                 dep2_boardCells[(i,j)].set_char(p2_moves[p2_idx])
-                                dep2_node = tree(dep2_boardCells, i, j, 2)
+                                dep2_node = tree(dep2_boardCells, i, j, 0)
                                 for k in range(7):
                                     for l in range(7):
                                         dep3_boardCells = copy.deepcopy(dep2_boardCells)
                                         if dep3_boardCells[(k,l)].char == '.':
                                             dep3_boardCells[(k,l)].set_char(p1_moves[p1_idx+1])
-                                            dep3_node = tree(dep3_boardCells, k, l, 3)
+                                            dep3_node = tree(dep3_boardCells, k, l, 0)
                                             dep2_node.children_append(dep3_node)
                                 dep1_node.children_append(dep2_node)
                     first_moves.append(dep1_node)
@@ -312,19 +329,19 @@ def minimax_setup(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx,
                 dep1_boardCells = boardCells.copy()
                 if dep1_boardCells[(x,y)].char == '.':
                     dep1_boardCells[(x,y)].set_char(p2_moves[p2_idx])
-                    dep1_node = tree(dep1_boardCells, 1)
+                    dep1_node = tree(dep1_boardCells, 0)
                     for i in range(7):
                         for j in range(7):
                             dep2_boardCells = dep1_boardCells.copy()
                             if dep2_boardCells[(i,j)].char == '.':
                                 dep2_boardCells[(i,j)].set_char(p1_moves[p1_idx])
-                                dep2_node = tree(dep2_boardCells, 2)
+                                dep2_node = tree(dep2_boardCells, 0)
                                 for k in range(7):
                                     for l in range(7):
                                         dep3_boardCells = dep2_boardCells.copy()
                                         if dep3_boardCells[(k,l)].char == '.':
                                             dep3_boardCells[(k,l)].set_char(p2_moves[p2_idx+1])
-                                            dep3_node = tree(dep3_boardCells, 3)
+                                            dep3_node = tree(dep3_boardCells, 0)
                                             dep2_node.children_append(dep3_node)
                                 dep1_node.children_append(dep2_node)
                     first_moves.append(dep1_node)
