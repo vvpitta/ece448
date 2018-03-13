@@ -48,8 +48,8 @@ def reflex(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, curren
         four_blue, block_blue = four_unbroken(best_count_blue, boardCells)
         three_blue, block_3_blue, idx = three_unbroken(best_count_blue, boardCells)
         if p1_idx == 0 and p2_idx == 0:
-            boardCells[(3,3)].set_char(p1_moves[p1_idx])
-            board[boardCells[(3,3)].idx] = boardCells[(3,3)].char
+            boardCells[(0,0)].set_char(p1_moves[p1_idx])
+            board[boardCells[(0,0)].idx] = boardCells[(0,0)].char
             board_string = ''.join(board)
             print board_string
             if current == 'reflex' and opponent == 'reflex':
@@ -142,8 +142,8 @@ def reflex(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, curren
         four_blue, block_blue = four_unbroken(best_count_blue, boardCells)
         three_red, block_3_red, idx = three_unbroken(best_count_red, boardCells)
         if p1_idx == 0 and p2_idx == 0:
-            boardCells[(3,3)].set_char(p2_moves[p2_idx])
-            board[boardCells[(3,3)].idx] = boardCells[(3,3)].char
+            boardCells[(0,0)].set_char(p2_moves[p2_idx])
+            board[boardCells[(0,0)].idx] = boardCells[(0,0)].char
             board_string = ''.join(board)
             print board_string
             if current == 'reflex' and opponent == 'reflex':
@@ -236,7 +236,7 @@ def eval_fn(boardCells, coord, player, coord_parent, coord_root):
     winning_blocks_coord = [block for block in winning_blocks_player if coord in block]
     potential = 0
     count = 0
-    for block in winning_blocks_coord:
+    for block in winning_blocks_player:
         for coords in block:
             if boardCells[coords].char != '.':
                 count += 1
@@ -262,25 +262,31 @@ def maximum(nodes):
     for node in nodes:
         if node.value > max_val:
             max_val = node.value
+
     return max_val
 
 def minimax(boardCells, first_moves, player, opponent):
     max_val = 0
     min_val = 0
     max_vals = []
-    best_opponent, winning_blocks_opponent = winning_blocks(boardCells, opponent)
-    four_opponent, block_opponent = four_unbroken(opponent, boardCells)
-    print four_opponent
-    if four_opponent:
-        for cell in block_opponent:
-            if boardCells[cell].char == '.':
-                return cell
+    # best_opponent, winning_blocks_opponent = winning_blocks(boardCells, opponent)
+    # four_opponent, block_opponent = four_unbroken(opponent, boardCells)
+    # print four_opponent
+    # if four_opponent:
+    #     for cell in block_opponent:
+    #         if boardCells[cell].char == '.':
+    #             return cell
     for dep1 in first_moves:
         for dep2 in dep1.children:
             for dep3 in dep2.children:
                 dep3.set_value(eval_fn(dep3.boardCells, (dep3.x, dep3.y), player, (dep2.x, dep2.y), (dep1.x, dep1.y)))
-            dep2.set_value(maximum(dep2.children))
-        dep1.set_value(minimum(dep1.children))
+            val= maximum(dep2.children)
+            dep2.set_value(val)
+            #if (dep1.x, dep1.y) == (3,2):
+                #print "Coord Max: " + str(coord_max) + " " + str(val)
+        val_min = minimum(dep1.children)
+        #print "Coord Min: " + str(coord_min) + " " + str(val_min)
+        dep1.set_value(val_min)
 
 
     max_val_nodes = []
@@ -297,13 +303,13 @@ def minimax(boardCells, first_moves, player, opponent):
     return (max_val_nodes[0].x, max_val_nodes[0].y)
 
 def minimax_setup(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx, current, opponent):
-    if p1_idx == 0 and p2_idx == 0:
-        boardCells[(3,3)].set_char(p1_moves[p1_idx])
+    if p1_idx == 0 or p2_idx == 0:
+        boardCells[(3,3)].set_char(p2_moves[p2_idx])
         board[boardCells[(3,3)].idx] = boardCells[(3,3)].char
         board_string = ''.join(board)
         print board_string
         if current == 'minimax' and opponent == 'reflex':
-            return reflex(boardCells, board, 'blue', p1_moves, p2_moves, (p1_idx+1), p2_idx, current ='reflex', opponent ='minimax')
+            return reflex(boardCells, board, 'blue', p1_moves, p2_moves, p1_idx, (p2_idx+1), current ='reflex', opponent ='minimax')
     first_moves = []
     if player == 'red':
         for x in range(7):
@@ -337,6 +343,7 @@ def minimax_setup(boardCells, board, player, p1_moves, p2_moves, p1_idx, p2_idx,
         print board_string
         elapsed_time = time.time() - start_time
         print elapsed_time
+        print nodes_expanded
         best_count, winning_blocks_red = winning_blocks(boardCells, 'red')
         if best_count[0][0] == 5:
             return boardCells
@@ -394,7 +401,7 @@ for x in range(7):
         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
         board[boardCells[(x,y)].idx] = boardCells[(x,y)].char
 
-boardCells = minimax_setup(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, p2_idx, current ='minimax', opponent='reflex')
+boardCells = reflex(boardCells, board, 'red', p1_moves, p2_moves, p1_idx, p2_idx, current ='reflex', opponent='minimax')
 
 for x in range(7):
     for y in range(7):

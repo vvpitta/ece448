@@ -710,7 +710,11 @@ def winning_blocks(boardCells, player):
 
     winning_blocks_total = winning_blocks_dl + winning_blocks_dr + winning_blocks_lr1 + winning_blocks_ud1
 
-    count_block = [(best_count_lr, best_block_lr), (best_count_ud, best_block_ud), (best_count_dr, best_block_dr), (best_count_dl, best_block_dl)]
+
+    count_block = [(best_count_dr, best_block_dr), (best_count_ud, best_block_ud), (best_count_lr, best_block_lr), (best_count_dl, best_block_dl)]
+
     fin_block = sorted(count_block, key = lambda x: x[0], reverse = True)
+
+
 
     return fin_block, winning_blocks_total
