@@ -1,6 +1,11 @@
 import numpy as np
 from minHeapClass import *
 
+'''
+Graph File:
+    This file is designed to return the given graphs from the MP
+'''
+
 def milesGraph():
 
     retVal = np.zeros((5, 5))
