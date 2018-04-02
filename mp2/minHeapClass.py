@@ -1,5 +1,14 @@
 # This class will be used to implement priority queue
 
+'''
+MinHeap class:
+    This class is designed to replicate a MinHeap using the heapq module.
+    The functionality includes:
+        isEmpty
+        Push
+        Pop
+'''
+
 import heapq
 
 class MinHeap:

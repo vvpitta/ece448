@@ -1,5 +1,15 @@
 # This file will be used to determine the class representation of a state
 
+'''
+StateNode class:
+    This class is designed to define a state in the planning algorithm
+    The functionality includes:
+        getters/setters
+        goalCsheck
+        printState
+        updatingWidgets
+'''
+
 class StateNode:
     def __init__(self, startCity):
         self.widget1 = [0,0,0,0,0]
