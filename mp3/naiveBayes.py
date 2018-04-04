@@ -125,9 +125,31 @@ def ConfMatrix(estimatedLabels, trueLabels):
             mat[row][col] = numCount / denomCount
         denomCount = 0.0
 
-    for row in
+    print "CONFUSION MATRIX"
+    for row in range(mat.shape[0]):
+        print "############", "CLASS", row, "############"
+        for col in range(mat.shape[1]):
+            print "Label", col, "=", mat[row][col]
 
-    return #mat
+    print
+    return mat
+
+def ClassifierAccuracy(estimatedLabels, trueLabels, confMat):
+
+    count = 0.0
+
+    for idx in range(len(estimatedLabels)):
+        if estimatedLabels[idx] == trueLabels[idx]:
+            count += 1
+
+    for x in range(confMat.shape[0]):
+        for y in range(confMat.shape[1]):
+            if x == y:
+                print "DIGIT", x, "ACCURACY:", confMat[x][y]
+
+    print "OVERALL ACCURACY:", (count/len(estimatedLabels))
+
+    return
 
 # Data Testing
 
@@ -145,11 +167,5 @@ mat = CondProbMatrix(trainData, trainLabels)
 print "RUNNING CLASSIFIER"
 estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
 
-count = 0.0
-for idx in range(len(estimatedLabels)):
-    if estimatedLabels[idx] == testLabels[idx]:
-        count += 1
-
-print "Accuracy:", (count/len(estimatedLabels))
-
-ConfMatrix(estimatedLabels, testLabels)
+confMat = ConfMatrix(estimatedLabels, testLabels)
+ClassifierAccuracy(estimatedLabels, testLabels, confMat)
