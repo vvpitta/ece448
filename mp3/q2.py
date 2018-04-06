@@ -4,7 +4,8 @@ Digit classification with multi-class perceptron
 import os
 import sys
 import numpy as np
-
+from knn import *
+import matplotlib.pyplot as plt
 
 train_feats = []
 train_labels = []
@@ -23,12 +24,31 @@ def output_to_terminal(output_vec):
     output_string = ''.join(output)
 
     print output_string
+
+
+def plot_heat_maps(digit_vecs):
+    for i in range(len(digit_vecs)):
+        reshaped = np.asarray(digit_vecs[i]).reshape(32,32)
+        plt.imshow(reshaped, cmap='hot', interpolation='nearest')
+        fname = "heatmap_" + str(i)
+        plt.savefig(fname)
+
 #######################################################################
 def activation_fn(feature_vec, digit_vec):
     scores = []
 
     for i in range(len(digit_vec)):
         score = np.dot(feature_vec, digit_vec[i])
+        scores.append(score)
+
+    np_scores = np.asarray(scores)
+    return np.argmax(np_scores)
+
+def activation_fn_with_bias(feature_vec, digit_vec):
+    scores = []
+
+    for i in range(len(digit_vec)):
+        score = np.dot(feature_vec, digit_vec[i]) + 10
         scores.append(score)
 
     np_scores = np.asarray(scores)
@@ -94,7 +114,7 @@ def perceptron_train(digit_vecs):
         digit_vecs_new.append(temp)
 
     for i in range(2436):
-        label = activation_fn(train_feats[i], digit_vecs)
+        label = activation_fn_with_bias(train_feats[i], digit_vecs)
         if label != train_labels[i]:
             # output_to_terminal(train_feats[i])
             for j in range(1024):
@@ -124,9 +144,11 @@ def main():
 
     digit_vecs = initialize_digit_vecs()
 
-    digit_vecs = perceptron_train(digit_vecs)
+    for i in range(15):
+        digit_vecs = perceptron_train(digit_vecs)
 
     perceptron_test(digit_vecs)
+    plot_heat_maps(digit_vecs)
 
     # output_to_terminal(digit_vecs[7])
     # print digit_vecs
