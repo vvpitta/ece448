@@ -191,7 +191,7 @@ def makefeature(trainData, x, y, n, m, idx):
     a = []
     for i in range(n):
         for j in range(m):
-          a.append(trainData[idx][x+j][y+i])
+          a.append(trainData[idx][x+i][y+j])
     return a
 
 def featureExtract(n,m,overlap):
@@ -276,20 +276,20 @@ print "TRAINING DATA"
 priors = PriorDistribution(trainLabels)
 
 ##mat = CondProbMatrix(trainData, trainLabels)
-allfeatures = featurelist(2,2)
+allfeatures = featurelist(2,4)
 #print "allfeatures"
 #print allfeatures
-extractedfeatures = featureExtract(2,2,False)
-print "extractedfeatures"
-print len(extractedfeatures)
+extractedfeatures = featureExtract(2,4,False)
+#print "extractedfeatures"
+#print extractedfeatures
+#print len(extractedfeatures)
 
-mat = ecCondProbMatrix(trainData, trainLabels, 2,2, False, extractedfeatures, allfeatures)
+mat = ecCondProbMatrix(trainData, trainLabels,2, 4, False, extractedfeatures, allfeatures)
 #print mat[0][0]
 
 print "RUNNING CLASSIFIER"
 ##estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
-estimatedLabels = ecNaiveBayes(testData, len(testLabels), priors, mat, extractedfeatures, 2, 2, allfeatures)
+estimatedLabels = ecNaiveBayes(testData, len(testLabels), priors, mat, extractedfeatures, 2, 3, allfeatures)
 print estimatedLabels
 confMat = ConfMatrix(estimatedLabels, testLabels)
 ClassifierAccuracy(estimatedLabels, testLabels, confMat)
-
