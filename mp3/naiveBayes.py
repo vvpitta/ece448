@@ -3,6 +3,7 @@
 import numpy as np
 from tqdm import tqdm
 import math
+import matplotlib.pyplot as plt
 
 # Feature Extraction
 
@@ -151,21 +152,63 @@ def ClassifierAccuracy(estimatedLabels, trueLabels, confMat):
 
     return
 
+def OddsRatio(mat, label1, label2):
+
+    likelihoods1 = np.zeros((32, 32))
+    likelihoods2 = np.zeros((32, 32))
+    oddsRatio = np.zeros((32, 32))
+
+    for x in range(likelihoods1.shape[0]):
+        for y in range(likelihoods2.shape[1]):
+            likelihoods1[x][y] = mat[label1][(32 * x) + y + 1024]
+            likelihoods2[x][y] = mat[label2][(32 * x) + y + 1024]
+            oddsRatio[x][y] = likelihoods1[x][y] / likelihoods2[x][y]
+
+            likelihoods1[x][y] = math.log(likelihoods1[x][y])
+            likelihoods2[x][y] = math.log(likelihoods2[x][y])
+            oddsRatio[x][y] = math.log(oddsRatio[x][y])
+
+
+    plt.imshow(likelihoods1, cmap='jet')
+    fname = "likelyhood_" + str(label1)
+    plt.savefig(fname)
+
+    plt.imshow(likelihoods2, cmap='jet')
+    fname = "likelyhood_" + str(label2)
+    plt.savefig(fname)
+
+    plt.imshow(oddsRatio, cmap='jet')
+    fname = "OddsRatio_" + str(label1) + "_" + str(label2)
+    plt.savefig(fname)
+
+    return
+
 # Data Testing
 
 # Classifier Evaluation
 # - Confusion Matrix
 # - Odds Ratios
-print "DATA EXTRACTION"
-trainData, trainLabels = DataExtraction("optdigits-orig_train.txt")
-testData, testLabels = DataExtraction("optdigits-orig_test.txt")
 
-print "TRAINING DATA"
-priors = PriorDistribution(trainLabels)
-mat = CondProbMatrix(trainData, trainLabels)
+def main():
 
-print "RUNNING CLASSIFIER"
-estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
+    print "DATA EXTRACTION"
+    trainData, trainLabels = DataExtraction("optdigits-orig_train.txt")
+    testData, testLabels = DataExtraction("optdigits-orig_test.txt")
 
-confMat = ConfMatrix(estimatedLabels, testLabels)
-ClassifierAccuracy(estimatedLabels, testLabels, confMat)
+    print "TRAINING DATA"
+    priors = PriorDistribution(trainLabels)
+    mat = CondProbMatrix(trainData, trainLabels)
+
+    print "RUNNING CLASSIFIER"
+    estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
+
+    confMat = ConfMatrix(estimatedLabels, testLabels)
+    ClassifierAccuracy(estimatedLabels, testLabels, confMat)
+
+    OddsRatio(mat, 4, 7)
+    OddsRatio(mat, 2, 8)
+    OddsRatio(mat, 9, 3)
+    OddsRatio(mat, 5, 9)
+
+if __name__ == "__main__":
+    main()
