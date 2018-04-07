@@ -6,6 +6,7 @@ import sys
 import numpy as np
 from knn import *
 import matplotlib.pyplot as plt
+from collections import Counter
 
 train_feats = []
 train_labels = []
@@ -32,6 +33,16 @@ def plot_heat_maps(digit_vecs):
         plt.imshow(reshaped, cmap='hot', interpolation='nearest')
         fname = "heatmap_" + str(i)
         plt.savefig(fname)
+
+
+def training_accuracy(digit_vecs, round):
+    count = 0
+    for i in range(444):
+        label = activation_fn(train_feats[i], digit_vecs)
+        if label == train_labels[i]:
+            count += 1
+
+    print round, count/(float(444))
 
 #######################################################################
 def activation_fn(feature_vec, digit_vec):
@@ -127,16 +138,28 @@ def perceptron_train(digit_vecs):
 def perceptron_test(digit_vecs):
     global test_feats
     global test_labels
+    conf_matrix = [[] for i in range(10)]
+    num_feats = [0 for i in range(10)]
     count = 0
 
     for i in range(444):
         label = activation_fn(test_feats[i], digit_vecs)
-        print "actual " + str(test_labels[i])
-        print "predicted " + str(label)
+        if test_labels[i] == 1:
+            print "actual " + str(test_labels[i])
+            print "predicted " + str(label)
         if label == test_labels[i]:
             count += 1
+        num_feats[test_labels[i]] += 1
+        conf_matrix[test_labels[i]].append(label)
+
+
+    for i in range(10):
+        counts = Counter(conf_matrix[i])
+        for j in counts.keys():
+            print i, j, counts[j]/(float(num_feats[i]))
 
     print count/(float(444))
+
 
 def main():
     load_train_data('/optdigits-orig_train.txt')
@@ -146,6 +169,7 @@ def main():
 
     for i in range(15):
         digit_vecs = perceptron_train(digit_vecs)
+        training_accuracy(digit_vecs, i)
 
     perceptron_test(digit_vecs)
     plot_heat_maps(digit_vecs)
