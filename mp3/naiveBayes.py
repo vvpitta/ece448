@@ -7,7 +7,13 @@ import matplotlib.pyplot as plt
 import sys
 
 # Feature Extraction
-
+'''
+    Method: DataExtraction
+    Inputs: filename -> Name of the file
+    Outputs: features -> The features from the data
+             labels -> The labels for each datum
+    Description: This file takes the raw text and creates data that can be manipulated
+'''
 def DataExtraction(filename):
 
     file = open(filename, "r")
@@ -38,7 +44,12 @@ def DataExtraction(filename):
 
 # Data Training
 # - Clasifier goes here
-
+'''
+    Method: PriorDistribution
+    Inputs: trainlabels -> The labels from the training data
+    Outputs: priors -> The prior probability for each label
+    Description: This method calculates the prior probability for each label
+'''
 def PriorDistribution(trainLabels):
 
     priors = np.zeros(10)
@@ -52,6 +63,18 @@ def PriorDistribution(trainLabels):
 
     return priors
 
+'''
+    Method: ConditionalProbability
+    Inputs: trainData -> The training data
+            trainlabels -> The training labels
+            x -> The x component of current feature
+            y -> The y component of current feature
+            currClass -> The current class to calculate probability
+            fVal -> The value of the feature to calculate
+            k -> The smoothing constant
+    Outputs: The conditional probability given a class for a certain feature
+    Description: This method calculates the conditional probability given a class for a certain feature
+'''
 def ConditionalProbability(trainData, trainLabels, x, y, currClass, fVal, k):
 
     zeroCount = 0.0
@@ -72,6 +95,14 @@ def ConditionalProbability(trainData, trainLabels, x, y, currClass, fVal, k):
     else:
         return prob1
 
+'''
+    Method: CondProbMatrix
+    Inputs: trainData -> training data
+            trainLabels -> training labels
+            k -> Smoothing constant
+    Outputs: mat -> The matrix containing all prior conditional probabilities
+    Description: This method optimizes the training process and makes the classification time faster
+'''
 def CondProbMatrix(trainData, trainLabels, k):
 
     mat = np.zeros((10, 2048))
@@ -86,6 +117,15 @@ def CondProbMatrix(trainData, trainLabels, k):
 
     return mat
 
+'''
+    Method: NaiveBayes
+    Inputs: data -> the data to run classifier on
+            labelArrSize -> Size of the label array
+            priors -> parameter estimates from TRAINING
+            mat -> parameter estimates from Training
+    Outputs: estimatedLabels -> The estimated labels from the classifier
+    Description: This method runs the Naive Bayes algorithm on a test data set and returns the classifiers labels
+'''
 def NaiveBayes(data, labelArrSize, priors, mat):
 
     estimatedLabels = np.zeros(labelArrSize)
@@ -109,6 +149,13 @@ def NaiveBayes(data, labelArrSize, priors, mat):
 
     return estimatedLabels
 
+'''
+    Method: ConfMatrix
+    Inputs: estimatedLabels -> estimated labels from classifier
+            trueLabels -> true labels from data set
+    Outputs: mat -> The confusion matrix
+    Description: This method creates a confusion matrix from the classifier data
+'''
 def ConfMatrix(estimatedLabels, trueLabels):
 
     mat = np.zeros((10, 10))
@@ -136,6 +183,14 @@ def ConfMatrix(estimatedLabels, trueLabels):
     print
     return mat
 
+'''
+    Method: ClassifierAccuracy
+    Inputs: estimatedLabels -> The estimated labels from the classifier
+            trueLabels -> The true labels from the data set
+            confMat -> The confusion matrix
+    Outputs: None
+    Description: This method calculates the accuracy for each label
+'''
 def ClassifierAccuracy(estimatedLabels, trueLabels, confMat):
 
     count = 0.0
@@ -153,6 +208,14 @@ def ClassifierAccuracy(estimatedLabels, trueLabels, confMat):
 
     return
 
+'''
+    Method: OddsRatio
+    Inputs: mat -> the prior probability matrix
+            label1 -> one of the digits
+            label2 -> the second of the pair of digits
+    Outputs: None
+    Description: Prints the likelihood ratios and odds ratios for each pair of digits
+'''
 def OddsRatio(mat, label1, label2):
 
     likelihoods1 = np.zeros((32, 32))
