@@ -1,7 +1,7 @@
-# This file is going to be used for Part 1 of MP3
+# This file is the second implmentation of ExtraCredit 1.2
 
 import numpy as np
-#from tqdm import tqdm
+from tqdm import tqdm
 import math
 import itertools
 
@@ -16,7 +16,7 @@ def DataExtraction(filename):
     vector = np.zeros((32, 32))
     y = 0
 
-    for line in file:
+    for line in tqdm(file):
         line = line.rstrip('\n')
         if len(line) == 32:
             text = list(line)
@@ -77,7 +77,7 @@ def CondProbMatrix(trainData, trainLabels):
 
     mat = np.zeros((10, 2048))
 
-    for label in range(mat.shape[0]):
+    for label in tqdm(range(mat.shape[0])):
         for x in range(32):
             for y in range(32):
                 mat[label][(32 * x) + y] = ConditionalProbability(trainData, trainLabels, x, y, label, 0)
@@ -92,7 +92,7 @@ def NaiveBayes(data, labelArrSize, priors, mat):
     estimatedLabels = np.zeros(labelArrSize)
     temp = np.zeros(10)
 
-    for idx in range(len(data)):
+    for idx in tqdm(range(len(data))):
         datum = data[idx]
         for label in range(10):
             tempSum = 0.0
@@ -154,7 +154,11 @@ def ClassifierAccuracy(estimatedLabels, trueLabels, confMat):
 
     return
 
-#Extra Credit 
+#Extra Credit Starts Here
+'''
+Creates a dictionary of all the distinct features given the size of the patch
+Creates a list of all the distinct features given the size of the patch
+'''
 def featurelist(n,m):
     size = n*m
     distinctfeatures = list(itertools.product([0,1], repeat = size))
@@ -163,6 +167,9 @@ def featurelist(n,m):
 		allfeatures[tuple(distinctfeatures[i])] = i
     return distinctfeatures, allfeatures
 
+'''
+This method is not used for training or testing in this implmentation
+'''
 def ecConditionalProbability(trainData, trainLabels, x, y, currClass, overlap, featuretocheck, extractedfeatures, n, m):
    # count = [len(allfeatures)]
     zeroCount = 0
@@ -185,19 +192,27 @@ def ecConditionalProbability(trainData, trainLabels, x, y, currClass, overlap, f
     #print prob1
     return (prob1)
 
+'''
+This method is not used for training or testing in this implmentation
+'''
 def compare(comp1, comp2):
     for i in range(len(comp1)):
         if comp1[i] != comp2[i]:
             return 0
     return 1
-            
+
+'''
+Used to find the patch given the data and the starting coordinates of the patch and size of the patch
+'''
 def makefeature(trainData, x, y, n, m, idx):
     a = []
     for i in range(n):
         for j in range(m):
           a.append(trainData[idx][x+i][y+j])
     return a
-
+'''
+returns a list of all the starting points of all possible patches given a patch and whether the patch is overlapping is not or not
+'''
 def featureExtract(n,m,overlap):
     a = []
     i = 0
@@ -221,14 +236,14 @@ def featureExtract(n,m,overlap):
     '''elif overlap == True:
         while i <'''
 
-# generate the Conditional Probability Matrix for feature sets
+# generate the Conditional Probability Matrix for feature sets given the training data, size of the feature, overlapping or disjoint, starting point of all possible patches for a 32*32 image, dicitionary of all possible features
 def ecCondProbMatrix(trainData, trainLabels, n,m,overlap,extractedfeatures, allfeatures):
     depth = 2**(n*m)
     col = len(extractedfeatures)
     mat = np.zeros((10,col, depth))
     lenlabels = np.zeros(10)
-    for label in range(10):
-        print "*"
+    for label in tqdm(range(10)):
+        #print "*"
         for x in range(len(extractedfeatures)):
             #print "col:" + str(x)
             count = 0
@@ -248,15 +263,18 @@ def ecCondProbMatrix(trainData, trainLabels, n,m,overlap,extractedfeatures, allf
     #print lenlabels
     return mat, lenlabels
 
+'''
+Method to compare two floats 
+'''
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
-# test and estimate the 
+# NaiveBayes Classifier mainly given the priors and the conditional probability matrix
 def ecNaiveBayes(data, labelArrSize, priors, mat, extractedfeatures, n, m, allfeatures, lenlabels):
 
     estimatedLabels = np.zeros(labelArrSize)
     temp = np.zeros(10)
-    for idx in range(len(data)):
+    for idx in tqdm(range(len(data))):
         #datum = data[idx]
         for label in range(10):
             tempSum = 0.0
@@ -285,7 +303,7 @@ def ecNaiveBayes(data, labelArrSize, priors, mat, extractedfeatures, n, m, allfe
 print "DATA EXTRACTION"
 trainData, trainLabels = DataExtraction("optdigits-orig_train.txt")
 testData, testLabels = DataExtraction("optdigits-orig_test.txt")
-print len(trainLabels)
+#print len(trainLabels)
 
 print "TRAINING DATA"
 priors = PriorDistribution(trainLabels)
@@ -295,18 +313,18 @@ distinctfeatures, allfeatures = featurelist(4,4)
 #print str(allfeatures[(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)])
 #print "allfeatures"
 #print allfeatures
-extractedfeatures = featureExtract(4,4,False)
+extractedfeatures = featureExtract(4,4,True)
 #print "extractedfeatures"
 #print extractedfeatures
 #print len(extractedfeatures)
 
-mat, lenlabels = ecCondProbMatrix(trainData, trainLabels,4, 4, False, extractedfeatures, allfeatures)
+mat, lenlabels = ecCondProbMatrix(trainData, trainLabels,4, 4, True, extractedfeatures, allfeatures)
 #print mat[0][0]
 
 print "RUNNING CLASSIFIER"
 ##estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
 estimatedLabels = ecNaiveBayes(testData, len(testLabels), priors, mat, extractedfeatures, 4, 4, allfeatures, lenlabels)
-print estimatedLabels
+#print estimatedLabels
 confMat = ConfMatrix(estimatedLabels, testLabels)
 ClassifierAccuracy(estimatedLabels, testLabels, confMat)
 
