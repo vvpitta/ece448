@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import math
 import matplotlib.pyplot as plt
+import sys
 
 # Feature Extraction
 
@@ -51,7 +52,7 @@ def PriorDistribution(trainLabels):
 
     return priors
 
-def ConditionalProbability(trainData, trainLabels, x, y, currClass, fVal):
+def ConditionalProbability(trainData, trainLabels, x, y, currClass, fVal, k):
 
     zeroCount = 0.0
     oneCount = 0.0
@@ -63,25 +64,25 @@ def ConditionalProbability(trainData, trainLabels, x, y, currClass, fVal):
             elif trainData[idx][x][y] == 1:
                 oneCount += 1
 
-    prob0 = (zeroCount + 10) / ((zeroCount + 10) + (oneCount + 10))
-    prob1 = (oneCount + 10) / ((zeroCount + 10) + (oneCount + 10))
+    prob0 = (zeroCount + k) / ((zeroCount + k) + (oneCount + k))
+    prob1 = (oneCount + k) / ((zeroCount + k) + (oneCount + k))
 
     if fVal == 0:
         return prob0
     else:
         return prob1
 
-def CondProbMatrix(trainData, trainLabels):
+def CondProbMatrix(trainData, trainLabels, k):
 
     mat = np.zeros((10, 2048))
 
     for label in tqdm(range(mat.shape[0])):
         for x in range(32):
             for y in range(32):
-                mat[label][(32 * x) + y] = ConditionalProbability(trainData, trainLabels, x, y, label, 0)
+                mat[label][(32 * x) + y] = ConditionalProbability(trainData, trainLabels, x, y, label, 0, k)
         for x in range(32):
             for y in range(32):
-                mat[label][(32 * x) + y + 1024] = ConditionalProbability(trainData, trainLabels, x, y, label, 1)
+                mat[label][(32 * x) + y + 1024] = ConditionalProbability(trainData, trainLabels, x, y, label, 1, k)
 
     return mat
 
@@ -197,7 +198,7 @@ def main():
 
     print "TRAINING DATA"
     priors = PriorDistribution(trainLabels)
-    mat = CondProbMatrix(trainData, trainLabels)
+    mat = CondProbMatrix(trainData, trainLabels, int(sys.argv[1]))
 
     print "RUNNING CLASSIFIER"
     estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
