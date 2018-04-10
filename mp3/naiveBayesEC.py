@@ -1,4 +1,5 @@
-# This file is going to be used for Part 1 of MP3
+# This file is the first implementation of ExtraCredit 1.2
+# ExtraCredit starts towards the bottom fo the file 
 
 import numpy as np
 from tqdm import tqdm
@@ -154,12 +155,14 @@ def ClassifierAccuracy(estimatedLabels, trueLabels, confMat):
 
     return
 
-#Extra Credit 
+#Extra Credit section starts here
+# returns a list of all the distinct features possible for a feature of size n*m
 def featurelist(n,m):
     size = n*m
     allfeatures = list(itertools.product([0,1], repeat = size))
     return allfeatures
 
+# helper function to calculate the conditional probability matrix. Calculates the probability for a given given feature and location of patch across the training data set 
 def ecConditionalProbability(trainData, trainLabels, x, y, currClass, overlap, featuretocheck, extractedfeatures, n, m):
    # count = [len(allfeatures)]
     zeroCount = 0
@@ -181,12 +184,14 @@ def ecConditionalProbability(trainData, trainLabels, x, y, currClass, overlap, f
     #print prob1
     return prob1
 
+#Used to compare if two lists are the same
 def compare(comp1, comp2):
     for i in range(len(comp1)):
         if comp1[i] != comp2[i]:
             return 0
     return 1
-            
+
+#Returns a list of pixels of lenghth n*m given the training data and size of the patch to extracted
 def makefeature(trainData, x, y, n, m, idx):
     a = []
     for i in range(n):
@@ -194,6 +199,7 @@ def makefeature(trainData, x, y, n, m, idx):
           a.append(trainData[idx][x+i][y+j])
     return a
 
+#Returns a list of possible starting points for patches for a 32*32 image given the size and whether the patches are overlapping or not
 def featureExtract(n,m,overlap):
     a = []
     i = 0
@@ -217,6 +223,7 @@ def featureExtract(n,m,overlap):
     '''elif overlap == True:
         while i <'''
 
+#Gets the conditional probability matrix given the training data, the list of starting points of patches, the size of the patches, overlap or disjoint, list of all possible distinct features
 def ecCondProbMatrix(trainData, trainLabels, n,m,overlap,extractedfeatures, allfeatures):
     depth = 2**(n*m)
     col = len(extractedfeatures)
@@ -237,7 +244,7 @@ def ecCondProbMatrix(trainData, trainLabels, n,m,overlap,extractedfeatures, allf
                 '''
     return mat
 
-
+#Naive Bayes Classifier using the already trained conditional probability matrix, the priors probabilities, the testdata, list of all possible features and the size of the features
 def ecNaiveBayes(data, labelArrSize, priors, mat, extractedfeatures, n, m, allfeatures):
 
     estimatedLabels = np.zeros(labelArrSize)
