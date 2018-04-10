@@ -221,35 +221,43 @@ def featureExtract(n,m,overlap):
     '''elif overlap == True:
         while i <'''
 
+# generate the Conditional Probability Matrix for feature sets
 def ecCondProbMatrix(trainData, trainLabels, n,m,overlap,extractedfeatures, allfeatures):
     depth = 2**(n*m)
     col = len(extractedfeatures)
     mat = np.zeros((10,col, depth))
+    lenlabels = np.zeros(10)
     for label in range(10):
         print "*"
         for x in range(len(extractedfeatures)):
             #print "col:" + str(x)
+            count = 0
             for idx in range(len(trainLabels)):
+
                 if(trainLabels[idx] == label):
+                    #lenlabels[label] = lenlabels[label] + 1.0
                     #print "reached"
+                    count += 1
                     row1 = extractedfeatures[x][0]
                     col1 = extractedfeatures[x][1]
                     a = makefeature(trainData, row1, col1, n, m, idx)
                     y = allfeatures[tuple(a)]
                     mat[label][x][y] = mat[label][x][y] + 1.0
+            lenlabels[label] = count
            
-
-    return mat
+    #print lenlabels
+    return mat, lenlabels
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
-def ecNaiveBayes(data, labelArrSize, priors, mat, extractedfeatures, n, m, allfeatures):
+# test and estimate the 
+def ecNaiveBayes(data, labelArrSize, priors, mat, extractedfeatures, n, m, allfeatures, lenlabels):
 
     estimatedLabels = np.zeros(labelArrSize)
     temp = np.zeros(10)
     for idx in range(len(data)):
-        datum = data[idx]
+        #datum = data[idx]
         for label in range(10):
             tempSum = 0.0
             tempSum += math.log(priors[label])
@@ -258,7 +266,7 @@ def ecNaiveBayes(data, labelArrSize, priors, mat, extractedfeatures, n, m, allfe
                 col1 = extractedfeatures[c][1]
                 a = makefeature(data, row1, col1, n, m, idx)
                 y = allfeatures[tuple(a)]
-                mat[label][c][y] = (mat[label][c][y] + 10.0)/(260.0)
+                mat[label][c][y] = ((mat[label][c][y])/(lenlabels[label])) + 0.00001
                 tempSum += math.log(mat[label][c][y])
 
             temp[label] = tempSum
@@ -292,12 +300,12 @@ extractedfeatures = featureExtract(4,4,False)
 #print extractedfeatures
 #print len(extractedfeatures)
 
-mat = ecCondProbMatrix(trainData, trainLabels,4, 4, False, extractedfeatures, allfeatures)
-print mat[0][0]
+mat, lenlabels = ecCondProbMatrix(trainData, trainLabels,4, 4, False, extractedfeatures, allfeatures)
+#print mat[0][0]
 
 print "RUNNING CLASSIFIER"
 ##estimatedLabels = NaiveBayes(testData, len(testLabels), priors, mat)
-estimatedLabels = ecNaiveBayes(testData, len(testLabels), priors, mat, extractedfeatures, 4, 4, allfeatures)
+estimatedLabels = ecNaiveBayes(testData, len(testLabels), priors, mat, extractedfeatures, 4, 4, allfeatures, lenlabels)
 print estimatedLabels
 confMat = ConfMatrix(estimatedLabels, testLabels)
 ClassifierAccuracy(estimatedLabels, testLabels, confMat)
