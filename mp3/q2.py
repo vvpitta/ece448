@@ -1,5 +1,8 @@
 '''
 Digit classification with multi-class perceptron
+
+
+A description is given in the report
 '''
 import os
 import sys
@@ -13,6 +16,9 @@ train_labels = []
 test_feats = []
 test_labels = []
 
+'''
+Helper function to visualize the digit images
+'''
 def output_to_terminal(output_vec):
     output = []
     for i in range(len(output_vec)):
@@ -26,7 +32,9 @@ def output_to_terminal(output_vec):
 
     print output_string
 
-
+'''
+Helper function to plot heat maps of the digit vectors
+'''
 def plot_heat_maps(digit_vecs):
     for i in range(len(digit_vecs)):
         reshaped = np.asarray(digit_vecs[i]).reshape(32,32)
@@ -34,7 +42,9 @@ def plot_heat_maps(digit_vecs):
         fname = "heatmap_" + str(i)
         plt.savefig(fname)
 
-
+'''
+helper function to figure out the training accuracy per epoch
+'''
 def training_accuracy(digit_vecs, round):
     count = 0
     for i in range(444):
@@ -45,6 +55,9 @@ def training_accuracy(digit_vecs, round):
     print round, count/(float(444))
 
 #######################################################################
+'''
+Activation function to determine predicted label
+'''
 def activation_fn(feature_vec, digit_vec):
     scores = []
 
@@ -55,6 +68,10 @@ def activation_fn(feature_vec, digit_vec):
     np_scores = np.asarray(scores)
     return np.argmax(np_scores)
 
+'''
+Activation function with a bias score of 10. Used to determine predicted
+label
+'''
 def activation_fn_with_bias(feature_vec, digit_vec):
     scores = []
 
@@ -65,6 +82,9 @@ def activation_fn_with_bias(feature_vec, digit_vec):
     np_scores = np.asarray(scores)
     return np.argmax(np_scores)
 
+'''
+Initialize training set from the file given
+'''
 def load_train_data(path):
     current_path = os.getcwd()
     global train_feats
@@ -84,6 +104,9 @@ def load_train_data(path):
         train_feats.append(temp)
         temp = []
 
+'''
+Initialize test set from the file path given
+'''
 def load_test_data(path):
     current_path = os.getcwd()
     global test_feats
@@ -103,7 +126,9 @@ def load_test_data(path):
         test_feats.append(temp)
         temp = []
 
-
+'''
+Initialize the digit vecs with list of 1024 0s
+'''
 def initialize_digit_vecs():
     empty_vec = [0 for i in range(1024)]
     digit_vecs = []
@@ -113,6 +138,10 @@ def initialize_digit_vecs():
 
     return digit_vecs
 
+'''
+Train the digit vecs according to the perceptron classification algorithm.
+Algorithm explained in report.
+'''
 def perceptron_train(digit_vecs):
     global train_feats
     global train_labels
@@ -135,6 +164,10 @@ def perceptron_train(digit_vecs):
 #                print digit_vecs[train_labels[i]][j], train_feats[train_labels[i]][j]
     return digit_vecs_new
 
+'''
+Compares the trained digit vecs with the testing image and generates
+an overall accuracy and confusion matrix.
+'''
 def perceptron_test(digit_vecs):
     global test_feats
     global test_labels
