@@ -1,4 +1,4 @@
-# This file will be used to test the pong game
+# This file will be used to test the pong agent
 
 from pong import *
 
