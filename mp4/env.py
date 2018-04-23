@@ -2,14 +2,20 @@
 
 from pong import *
 
-game = Pong()
-game.getState()
+initialState = PongState(0.99, 0.5, 0.03, 0.01, 0.4)
+initialTuple = initialState.getState()
+initialDTuple = initialState.discreteMap()
+print initialTuple
+print initialDTuple
 
-game.movePaddle(0)
-game.getState()
+# rewards = []
+# for idx in range(12):
+#     temp = (11, idx)
+#     rewards.append(temp)
 
-game.moveBall()
-game.getState()
+action = initialState.chooseAction()
+print action
 
-game.bounce()
-game.getState()
+reward = initialState.moveNextStep(action)
+print initialState.getState(), initialState.discreteMap()
+print reward
