@@ -55,29 +55,29 @@ class PongState:
         return actions[index], index
 
     def moveNextStep(self, action_val):
-        print 'MOVE BALL'
+        # print 'MOVE BALL'
         self.ballX += self.vX
         self.ballY += self.vY
 
-        print 'MOVE PADDLE'
+        # print 'MOVE PADDLE'
         self.paddle += action_val
 
         U = round(rand.uniform(-0.015, 0.015), 3)
         V = round(rand.uniform(-0.03, 0.03), 3)
         if(self.ballY < 0):
-            print 'TOP BOUNCE'
+            # print 'TOP BOUNCE'
             self.ballY *= -1
             self.vY *= -1
         if(self.ballY > 1):
-            print 'BOTTOM BOUNCE'
-            self.ballY = 2 - ballY
+            # print 'BOTTOM BOUNCE'
+            self.ballY = 2 - self.ballY
             self.vY *= -1
         if(self.ballX < 0):
-            print 'LEFT BOUNCE'
+            # print 'LEFT BOUNCE'
             self.ballX *= -1
             self.vX *= -1
         if(self.ballX > 1 and self.ballY > self.paddle and self.ballY < (self.paddle + .2)):
-            print 'PADDLE BOUNCE'
+            # print 'PADDLE BOUNCE'
             self.ballX = 2 - self.ballX
             self.vX = (self.vX * -1) + U
             self.vY += V

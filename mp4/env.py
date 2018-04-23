@@ -2,34 +2,44 @@
 
 from pong import *
 from qLearning import *
+import random as rand
+from tqdm import tqdm
 
 q = qlearn()
-initialState = PongState(0.99, 0.5, 0.03, 0.01, 0.4)
-initialTuple = initialState.getState()
-initialDTuple = initialState.discreteMap()
-curr_key = initialDTuple
+# currState = PongState(0.5, 0.5, 0.03, 0.01, 0.4)
+# currTuple = currState.getState()
+# curr_key = currState.discreteMap()
 
-print initialDTuple
+for i in tqdm(range(100000)):
+    ballX = round(rand.uniform(0.01, 0.99), 2)
+    ballY = round(rand.uniform(0.01, 0.99), 2)
+    vX = round(rand.uniform(-0.015, 0.015), 3)
+    vY = round(rand.uniform(-0.03, 0.03), 3)
+    paddle = round(rand.uniform(0, 0.80), 2)
 
-# rewards = []
-# for idx in range(12):
-#     temp = (11, idx)
-#     rewards.append(temp)
+    currState = PongState(ballX, ballY, vX, vY, paddle)
+    currTuple = currState.getState()
+    curr_key = currState.discreteMap()
 
-action, index = initialState.chooseAction()
-print action, index
+    while currState.getState()[0] < 1:
+        action, index = currState.chooseAction()
+        # print 'Action:', action, 'Index:', index
 
-reward = initialState.moveNextStep(action)
-next_key = initialState.discreteMap()
+        reward = currState.moveNextStep(action)
+        next_key = currState.discreteMap()
 
-print reward
+        # print 'Reward:', reward
 
-print initialState.getState()
-print next_key
+        # print initialState.getState()
+        # print curr_key
+        # print next_key
 
-action_q_scores = q.get_actions(next_key)
+        action_q_scores = q.get_actions(next_key)
 
-value = reward + max(action_q_scores)
-print "Value:", value
+        value = reward + (0.8 * max(action_q_scores))
+        # print "Value:", value
 
-q.set_q(curr_key, index, value)
+        q.set_q(curr_key, index, value)
+
+        curr_key = next_key
+        # print

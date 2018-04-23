@@ -1,9 +1,9 @@
 # # This file will be used to do part 1 of the MP
 
 class qlearn:
+    
   def __init__(self):
     self.q_matrix = {}
-
 
   def get_q(self, state, action):
     if state in self.q_matrix.keys():
