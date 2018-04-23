@@ -10,9 +10,11 @@ class qlearn:
       return self.q_matrix[state][action]
 
   def set_q(self, state, action, value):
+    if state not in self.q_matrix.keys():
+        self.q_matrix[state] = [0, 0, 0]
     self.q_matrix[state][action] = value
 
   def get_actions(self, state):
     if state not in self.q_matrix.keys():
       self.q_matrix[state] = [0, 0, 0]
-    return q_matrix[state]
+    return self.q_matrix[state]

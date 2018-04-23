@@ -52,7 +52,7 @@ class PongState:
     def chooseAction(self):
         actions = [0, 0.04, -0.04]
         index = rand.randint(0,2)
-        return actions[index]
+        return actions[index], index
 
     def moveNextStep(self, action_val):
         print 'MOVE BALL'
@@ -81,6 +81,7 @@ class PongState:
             self.ballX = 2 - self.ballX
             self.vX = (self.vX * -1) + U
             self.vY += V
+            return 1
 
         # For every single non paddle interaction
         if self.ballX < 1:
