@@ -5,7 +5,7 @@ from qLearning import *
 import random as rand
 from tqdm import tqdm
 import json
-import matplotlib
+import matplotlib.pyplot as plt
 from simulation import *
 import numpy as np
 
@@ -85,6 +85,20 @@ with open('qmat.txt', 'w') as file:
 with open('string_object_map.txt', 'w') as file2:
     file2.write(json.dumps(string_object_mapping))
 
-hits = play_game(q)
-print
-print hits
+x_plot = []
+y_plot = []
+
+for i in range(len(tot_hits)):
+    if i == 0:
+        x_plot.append(i)
+        y_plot.append(sum(tot_hits[0:i]))
+    else:
+        x_plot.append(i)
+        y_plot.append(sum(tot_hits[0:i])/i)
+
+
+plt.plot(x_plot, y_plot)
+plt.ylabel("Mean Reward Per Episode")
+plt.xlabel("Episode")
+plt.title("Mean Reward Per Episode vs Episode")
+plt.savefig("test2.png")
