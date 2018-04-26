@@ -5,33 +5,50 @@ from qLearning import *
 import random as rand
 from tqdm import tqdm
 import json
+import matplotlib
+from simulation import *
+import numpy as np
 
 q = qlearn()
 # currState = PongState(0.5, 0.5, 0.03, 0.01, 0.4)
 # currTuple = currState.getState()
 # curr_key = currState.discreteMap()
+tot_hits = []
 
 for i in tqdm(range(100000)):
-    ballX = round(rand.uniform(0.1, 0.90), 2)
-    ballY = round(rand.uniform(0.1, 0.90), 2)
+    # ballX = 0.5
+    # ballY = 0.5
     vX = round(rand.random(), 2)
-    while vX < 0.03:
+    while vX < 0.06:
         vX = round(rand.random(), 2)
     if i%2 == 0:
         vX *= -1
-    vY = round(rand.uniform(-0.03, 0.03), 3)
-    paddle = round(rand.uniform(0, 0.80), 2)
-
-    currState = PongState(ballX, ballY, vX, vY, paddle)
+    # vY = round(rand.uniform(-0.03, 0.03), 3)
+    # paddle = 0.4
+    #
+    # currState = PongState(ballX, ballY, vX, vY, paddle)
+    currState = PongState(0.5, 0.5, vX, 0.01, 0.4)
     currTuple = currState.getState()
     curr_key = currState.discreteMap()
+    reward = 0
+    hits = 0
 
-    while currState.getState()[0] < 1:
-        action, index = currState.chooseAction()
+    if i % 10000 == 0 and i != 0:
+        print
+        print 'Averaging ', sum(tot_hits)/len(tot_hits), ' hit(s) by game ', i
+
+    while reward != -1:
+        # action, index = currState.chooseAction()
         # print 'Action:', action, 'Index:', index
 
-        reward = currState.moveNextStep(action)
+        actions = [0, 0.04, -0.04]
+        action_c_scores = q.get_actions(curr_key)
+        value, index = max(action_c_scores), np.argmax(action_c_scores)
+
+        reward = currState.moveNextStep(actions[index])
         next_key = currState.discreteMap()
+        action_q_scores = q.get_actions(next_key)
+        future_val = max(action_q_scores)
 
         # print 'Reward:', reward
 
@@ -39,15 +56,18 @@ for i in tqdm(range(100000)):
         # print curr_key
         # print next_key
 
-        action_q_scores = q.get_actions(next_key)
-
-        value = reward + (0.8 * max(action_q_scores))
+        new_value = value + .5 * (reward + 0.8*future_val - value)
         # print "Value:", value
 
-        q.set_q(curr_key, index, value)
+        q.set_q(curr_key, index, new_value)
 
         curr_key = next_key
         # print
+        if reward == 1:
+            hits += 1
+
+    tot_hits.append(hits)
+
 
 q_dict = q.get_qmat()
 qs_dict = {}
@@ -64,3 +84,7 @@ with open('qmat.txt', 'w') as file:
 
 with open('string_object_map.txt', 'w') as file2:
     file2.write(json.dumps(string_object_mapping))
+
+hits = play_game(q)
+print
+print hits

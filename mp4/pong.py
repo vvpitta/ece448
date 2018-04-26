@@ -21,10 +21,13 @@ class PongState:
         self.paddle = paddle
 
     def discreteMap(self):
-        bucketSize = 0.0833333333
+        if self.ballX >= 1:
+            return (12, 0, 0, 0, 0)
 
-        ballXDiscrete = math.floor(self.ballX / bucketSize)
-        ballYDiscrete = math.floor(self.ballY / bucketSize)
+        # bucketSize = 0.0833333333
+
+        ballXDiscrete = int(math.floor(self.ballX * 12))
+        ballYDiscrete = int(math.floor(self.ballY * 12))
 
         vXDiscrete = 0
         if(self.vX > 0):
@@ -40,9 +43,10 @@ class PongState:
         else:
             vYDiscrete = -1
 
-        paddleDiscrete = math.floor((12 * self.paddle) / 0.8)
         if(self.paddle == 0.8):
             paddleDiscrete = 11.0
+        else:
+            paddleDiscrete = math.floor((12 * self.paddle) / 0.8)
 
         return (ballXDiscrete, ballYDiscrete, vXDiscrete, vYDiscrete, paddleDiscrete)
 
@@ -61,6 +65,10 @@ class PongState:
 
         # print 'MOVE PADDLE'
         self.paddle += action_val
+        if self.paddle > .8:
+            self.paddle = .8
+        if self.paddle < 0:
+            self.paddle = 0
 
         U = round(rand.uniform(-0.015, 0.015), 3)
         V = round(rand.uniform(-0.03, 0.03), 3)
@@ -76,12 +84,15 @@ class PongState:
             # print 'LEFT BOUNCE'
             self.ballX *= -1
             self.vX *= -1
-        if(self.ballX > 1 and self.ballY > self.paddle and self.ballY < (self.paddle + .2)):
-            # print 'PADDLE BOUNCE'
-            self.ballX = 2 - self.ballX
-            self.vX = (self.vX * -1) + U
-            self.vY += V
-            return 1
+        # if(self.ballX > 1 and self.ballY > self.paddle and self.ballY < (self.paddle + .2)):
+        #     # print 'PADDLE BOUNCE'
+        #     self.ballX = 2 - self.ballX
+        #     if self.vX > 0.06:
+        #         self.vX = (self.vX * -1) + U
+        #     else:
+        #         self.vX *= -1
+        #     self.vY += V
+        #     return 1
 
         # For every single non paddle interaction
         if self.ballX < 1:
@@ -90,5 +101,14 @@ class PongState:
         # Check Miss
         if (self.ballY < self.paddle or self.ballY > self.paddle + 0.2):
             return -1
+
+
+        self.ballX = 2-self.ballX
+        self.vX = -self.Vx + random.uniform(-0.015, 0.015)
+        if abs(self.vX) < 0.3:
+            self.vX = abs(self.vX)/self.vX * 0.03
+        self.vX = max(-1, min(1, self.vX))
+        self.vY = self.vY + random.uniform(-0.03, 0.03)
+        self.vY = max(-1, min(1, self.vY))
 
         return 1
