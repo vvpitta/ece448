@@ -104,11 +104,11 @@ class PongState:
 
 
         self.ballX = 2-self.ballX
-        self.vX = -self.vX + random.uniform(-0.015, 0.015)
+        self.vX = -self.vX + rand.uniform(-0.015, 0.015)
         if abs(self.vX) < 0.3:
             self.vX = abs(self.vX)/self.vX * 0.03
         self.vX = max(-1, min(1, self.vX))
-        self.vY = self.vY + random.uniform(-0.03, 0.03)
+        self.vY = self.vY + rand.uniform(-0.03, 0.03)
         self.vY = max(-1, min(1, self.vY))
 
         return 1
