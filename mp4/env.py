@@ -42,6 +42,7 @@ for i in tqdm(range(100000)):
         # print 'Action:', action, 'Index:', index
 
         actions = [0, 0.04, -0.04]
+        q.add_to_state(curr_key)
         action_c_scores = q.get_actions(curr_key)
         value, index = max(action_c_scores), np.argmax(action_c_scores)
 
@@ -56,7 +57,9 @@ for i in tqdm(range(100000)):
         # print curr_key
         # print next_key
 
-        new_value = value + .5 * (reward + 0.8*future_val - value)
+        # (50/(50+(q.seen_val(curr_key))))
+
+        new_value = value + (50/float((50+(q.seen_val(curr_key))))) * (reward + 0.8*future_val - value)
         # print "Value:", value
 
         q.set_q(curr_key, index, new_value)
@@ -79,10 +82,10 @@ for key in q_dict.keys():
     qs_dict[state] = q_dict[key]
     i += 1
 
-with open('qmat.txt', 'w') as file:
+with open('qmat2.txt', 'w') as file:
     file.write(json.dumps(qs_dict))
 
-with open('string_object_map.txt', 'w') as file2:
+with open('string_object_map2.txt', 'w') as file2:
     file2.write(json.dumps(string_object_mapping))
 
 x_plot = []
@@ -94,7 +97,7 @@ for i in range(len(tot_hits)):
         y_plot.append(sum(tot_hits[0:i]))
     else:
         x_plot.append(i)
-        y_plot.append(sum(tot_hits[0:i])/i)
+        y_plot.append(sum(tot_hits[0:i])/float(i))
 
 
 plt.plot(x_plot, y_plot)
