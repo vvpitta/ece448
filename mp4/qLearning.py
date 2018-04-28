@@ -27,4 +27,9 @@ class qlearn:
       self.q_matrix = matr
 
   def add_to_state(self, state):
+      if state not in self.state_seen.keys():
+          self.state_seen[state] = 0
       self.state_seen[state] += 1
+
+  def seen_val(self, state):
+      return self.state_seen[state]

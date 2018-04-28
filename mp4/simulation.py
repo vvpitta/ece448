@@ -18,25 +18,25 @@ def play_game(q):
     while True:
         action_idx = np.argmax(q.get_actions(curr_key))
         action = paddle_actions[action_idx]
-        print "currState", currState.getState()
-        print "dmap", currState.discreteMap()
-        print "action", action
+        # print "currState", currState.getState()
+        # print "dmap", currState.discreteMap()
+        # print "action", action
         reward = currState.moveNextStep(action)
-        print "reward", reward
+        # print "reward", reward
         next_key = currState.discreteMap()
         if reward == -1:
             return hits
         if reward == 1:
             hits += 1
         curr_key = next_key
-        print
+        # print
 
 
 def main():
     q = qlearn()
     current_path = os.getcwd()
-    path1 = "/qmat.txt"
-    path2 = "/string_object_map.txt"
+    path1 = "/qmat_old.txt"
+    path2 = "/string_object_map_old.txt"
 
     som = {}
     vals = {}
@@ -54,12 +54,12 @@ def main():
 
     q.set_qmat(qmat)
     hits_tot = []
-    for i in range(5):
+    for i in range(200):
         hits = play_game(q)
         hits_tot.append(hits)
 
-    print
-    print hits_tot
+
+    print "Average hits:" , sum(hits_tot)/200
 
 
 

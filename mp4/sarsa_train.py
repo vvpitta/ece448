@@ -1,7 +1,12 @@
+'''
+Sarsa Training
+'''
+
 # This file will be used to test the pong agent
 
 from pong import *
 from qLearning import *
+from sarsa_learn import *
 import random as rand
 from tqdm import tqdm
 import json
@@ -9,7 +14,7 @@ import matplotlib.pyplot as plt
 from simulation import *
 import numpy as np
 
-q = qlearn()
+s = slearn()
 # currState = PongState(0.5, 0.5, 0.03, 0.01, 0.4)
 # currTuple = currState.getState()
 # curr_key = currState.discreteMap()
@@ -42,31 +47,33 @@ for i in tqdm(range(100000)):
         # print 'Action:', action, 'Index:', index
 
         actions = [0, 0.04, -0.04]
-        q.add_to_state(curr_key)
-        action_c_scores = q.get_actions(curr_key)
+        s.add_to_state(curr_key)
+        action_c_scores = s.get_actions(curr_key)
         if rand.random() < 0.05:
             index = rand.randint(0,2)
             value = action_c_scores[index]
         else:
             value, index = max(action_c_scores), np.argmax(action_c_scores)
-
         reward = currState.moveNextStep(actions[index])
         next_key = currState.discreteMap()
-        action_q_scores = q.get_actions(next_key)
-        future_val = max(action_q_scores)
-
+        action_q_scores = s.get_actions(next_key)
+        if rand.random() < 0.05:
+            index = rand.randint(0,2)
+            future_val = action_q_scores[index]
+        else:
+            future_val = max(action_q_scores)
         # print 'Reward:', reward
 
         # print initialState.getState()
         # print curr_key
         # print next_key
 
-        # (50/float((50+(q.seen_val(curr_key)))))
+        # (50/(50+(q.seen_val(curr_key))))
 
-        new_value = value + (50/float((50+(q.seen_val(curr_key))))) * (reward + 0.8*future_val - value)
+        new_value = value + (50/float((50+(s.seen_val(curr_key))))) * (reward + 0.8*future_val - value)
         # print "Value:", value
 
-        q.set_q(curr_key, index, new_value)
+        s.set_s(curr_key, index, new_value)
 
         curr_key = next_key
         # print
@@ -76,20 +83,20 @@ for i in tqdm(range(100000)):
     tot_hits.append(hits)
 
 
-q_dict = q.get_qmat()
-qs_dict = {}
+s_dict = s.get_smat()
+ss_dict = {}
 string_object_mapping = {}
 i = 0
 for key in q_dict.keys():
     state = "state" + str(i)
     string_object_mapping[state] = key
-    qs_dict[state] = q_dict[key]
+    ss_dict[state] = s_dict[key]
     i += 1
 
-with open('qmat2.txt', 'w') as file:
-    file.write(json.dumps(qs_dict))
+with open('smat.txt', 'w') as file:
+    file.write(json.dumps(ss_dict))
 
-with open('string_object_map2.txt', 'w') as file2:
+with open('string_object_map_s.txt', 'w') as file2:
     file2.write(json.dumps(string_object_mapping))
 
 x_plot = []
@@ -104,12 +111,11 @@ for i in range(len(x_plot)):
 x_string = ''.join(x_char_plot)
 y_string = ''.join(y_char_plot)
 
-with open('q_x', 'w') as file3:
+with open('sarsa_x', 'w') as file3:
     file3.write(x_string)
 
-with open('q_y', 'w') as file4:
+with open('sarsa_y', 'w') as file4:
     file4.write(y_string)
-
 
 for i in range(len(tot_hits)):
     if i == 0:
@@ -124,4 +130,4 @@ plt.plot(x_plot, y_plot)
 plt.ylabel("Mean Reward Per Episode")
 plt.xlabel("Episode")
 plt.title("Mean Reward Per Episode vs Episode")
-plt.savefig("test2.png")
+plt.savefig("sarsa.png")
