@@ -18,5 +18,4 @@ class ReLUCache:
         self.Zchange = Zchange
 
     def getAll(self):
-        return self.Z
-        return self.Zchange
+        return self.Z, self.Zchange

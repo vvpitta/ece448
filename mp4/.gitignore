@@ -1,1 +1,7 @@
 *.pyc
+.ipynb_checkpoints/
+check_affine.txt
+check_cross_entropy.txt
+check_relu.txt
+dnn.ipynb
+methodsTest.py

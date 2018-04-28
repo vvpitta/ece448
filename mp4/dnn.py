@@ -2,8 +2,11 @@
 import numpy as np
 import random as rand
 from methods import *
+from cache import *
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
-def network(X, weights, biases, y, test):
+def network(X, weights, biases, y, test=False):
 
     Z1, acache1 = affineForward(X, weights[0], biases[0])
     A1, rcache1 = reLUForward(Z1)
@@ -16,7 +19,11 @@ def network(X, weights, biases, y, test):
 
     F, acache4 = affineForward(A3, weights[3], biases[3])
 
-    #do the test thing here
+    predict = np.zeros(y.shape)
+    if test == True:
+        for i in range(F.shape[0]):
+            predict[i] = np.argmax(F[i])
+        return predict
 
     loss, dF = crossEntropy(F, y)
 
@@ -31,13 +38,68 @@ def network(X, weights, biases, y, test):
 
     dX, dW1, db1 = affineBackward(dZ1, acache1)
 
-    #update parameters
+    # update parameters
     dWeights = [dW1, dW2, dW3, dW4]
     dBiases = [db1, db2, db3, db4]
-    rate = 0.1
+    rate = 0.01
 
     for idx in range(len(weights)):
-        weights[idx] = weights[idx] - (rate * dWeights[idx])
-        biases[idx] = biases[idx] - (rate * dBiases[idx])
+        weights[idx] = weights[idx] - rate * dWeights[idx]
+        biases[idx] = biases[idx] - rate * dBiases[idx]
 
     return loss
+
+def graphNet(eList, accList, lossList):
+
+    fig, ax1 = plt.subplots()
+
+    color = 'tab:blue'
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('Accuracy', color=color)
+    ax1.plot(eList, accList, color=color)
+    ax1.tick_params(axis='y', labelcolor=color)
+
+    ax2 = ax1.twinx()
+
+    color = 'tab:red'
+    ax2.set_ylabel('Loss', color=color)
+    ax2.plot(eList, lossList, color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
+
+    fig.tight_layout()
+    plt.show()
+
+def miniBatch(data, epoch, batch):
+
+    weights, biases = weightsBiases((data.shape[1] - 1), 256, 256, 256, 3, 0.01)
+
+    eList = []
+    accList = []
+    lossList = []
+
+    for e in tqdm(range(epoch)):
+
+        np.random.shuffle(data)
+        epochLoss = 0
+
+        for i in range(data.shape[0] / batch):
+
+            X = data[(batch*i):(batch*i)+batch , 0:5]
+            y = data[(batch*i):(batch*i)+batch , 5:6]
+
+            loss = network(X, weights, biases, y)
+            epochLoss += loss
+
+        predict = network(data[:, 0:5], weights, biases, data[:, 5:6], True)
+        acc = float(np.sum(predict == data[:, 5:6])) / data.shape[0]
+
+        eList.append(e)
+        accList.append(acc)
+        lossList.append(epochLoss)
+
+    graphNet(eList, accList, lossList)
+
+    return
+
+data = extract("expert_policy.txt")
+miniBatch(data, 1000, 500)
