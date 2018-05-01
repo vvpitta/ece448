@@ -54,8 +54,8 @@ def checkColl(bl, blPOSX, blPOSY):
     return blPOSX, blPOSY
 
 def checkCollBl(bl, pad1, pad2, blPOSX):
-    U = int((round(rand.uniform(-0.015, 0.015), 3)) * SPEED)
-    V = int((round(rand.uniform(-0.03, 0.03),3)) * SPEED)
+    U = (round(rand.uniform(-0.015, 0.015), 3)) * SPEED
+    V = (round(rand.uniform(-0.03, 0.03),3)) * SPEED
     U = 0
     V = 0
     if blPOSX == -1 and pad1.right == bl.left and pad1.top < bl.top and pad1.bottom > bl.bottom:
@@ -69,9 +69,13 @@ def AI(bl, pad2, blPOSX, blPOSY, q):
     if bl.x > (WW - POF -LT) or bl.x < WW/2 :
         return pad2
     else:
-        blXDiscrete = int(math.floor(((bl.centerx-(WW/2))/(WW/2))*12))
-        blYDiscrete = int(math.floor((bl.centery/WH)*12))
-        padxDiscrete = int(math.floor((12*(pad2.centery/WH))/(1-(PS/WH))))
+        # currentState = PongState(bl.centerx, bl.centery, blPOSX, blPOSY, pad2.centery)
+        # curr_key = currentState.discreteMap()
+        blXDiscrete = int(math.floor(((bl.centerx-(WW/2))/float((WW/2)))*12))
+        blYDiscrete = int(math.floor((bl.centery/float(WH))*12))
+        padxDiscrete = int(math.floor((12*(pad2.centery/float(WH)))/float((1-(PS/float(WH))))))
+        if padxDiscrete > 11.0:
+            padxDiscrete = 11.0
         currentState = (blXDiscrete, blYDiscrete, blPOSX, blPOSY, padxDiscrete)
         paddle_actions = [0, 0.04, -0.04]
         action_idx = np.argmax(q.get_actions(currentState))
@@ -114,8 +118,8 @@ def main():
 
     q = qlearn()
     current_path = os.getcwd()
-    path1 = "/qmat_old.txt"
-    path2 = "/string_object_map_old.txt"
+    path1 = "/qmat_new.txt"
+    path2 = "/string_object_map_new.txt"
 
     som = {}
     vals = {}
