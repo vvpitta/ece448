@@ -15,12 +15,27 @@ from simulation import *
 import numpy as np
 
 s = slearn()
-# currState = PongState(0.5, 0.5, 0.03, 0.01, 0.4)
-# currTuple = currState.getState()
-# curr_key = currState.discreteMap()
+
+# Initiliazing the S Matrix with 0s for every state
+init_mat = {}
+seen_state = {}
+x_vels = [-1,1]
+for ballX in range(13):
+    for ballY in range(13):
+        for vX in x_vels:
+            for vY in range(-1,2):
+                for paddle in range(12):
+                    init_mat[(ballX, ballY, vX, vY, paddle)] = [0.0, 0.0, 0.0]
+                    seen_state[(ballX, ballY, vX, vY, paddle)] = 0
+init_mat[(12,0,0,0,0)] = [0.0, 0.0, 0.0]
+seen_state[(12,0,0,0,0)] = 0
+s.set_smat(init_mat)
+s.set_seenMat(seen_state)
+
 tot_hits = []
 
-for i in tqdm(range(100000)):
+# Training 200k times
+for i in tqdm(range(200000)):
     # ballX = 0.5
     # ballY = 0.5
     vX = round(rand.random(), 2)
@@ -28,10 +43,8 @@ for i in tqdm(range(100000)):
         vX = round(rand.random(), 2)
     if i%2 == 0:
         vX *= -1
-    # vY = round(rand.uniform(-0.03, 0.03), 3)
-    # paddle = 0.4
-    #
-    # currState = PongState(ballX, ballY, vX, vY, paddle)
+
+    # Initial ball state for every game
     currState = PongState(0.5, 0.5, vX, 0.01, 0.4)
     currTuple = currState.getState()
     curr_key = currState.discreteMap()
@@ -42,52 +55,48 @@ for i in tqdm(range(100000)):
         print
         print 'Averaging ', sum(tot_hits)/len(tot_hits), ' hit(s) by game ', i
 
+    # Play the game till the AI loses
     while reward != -1:
-        # action, index = currState.chooseAction()
-        # print 'Action:', action, 'Index:', index
+
 
         actions = [0, 0.04, -0.04]
         s.add_to_state(curr_key)
         action_c_scores = s.get_actions(curr_key)
-        if rand.random() < 0.05:
+
+        # Double Exploration for action and next action
+        if rand.random() < 0.0025:
             index = rand.randint(0,2)
             value = action_c_scores[index]
         else:
             value, index = max(action_c_scores), np.argmax(action_c_scores)
+
         reward = currState.moveNextStep(actions[index])
         next_key = currState.discreteMap()
         action_q_scores = s.get_actions(next_key)
-        if rand.random() < 0.05:
+        if rand.random() < 0.0025:
             index = rand.randint(0,2)
             future_val = action_q_scores[index]
         else:
             future_val = max(action_q_scores)
-        # print 'Reward:', reward
 
-        # print initialState.getState()
-        # print curr_key
-        # print next_key
-
-        # (50/(50+(q.seen_val(curr_key))))
-
-        new_value = value + (50/float((50+(s.seen_val(curr_key))))) * (reward + 0.8*future_val - value)
-        # print "Value:", value
+        # Bellman Algorithm to update Q value for current state
+        new_value = value + (50/float((50+(s.seen_val(curr_key))))) * (reward + .85*future_val - value)
 
         s.set_s(curr_key, index, new_value)
 
         curr_key = next_key
-        # print
         if reward == 1:
             hits += 1
 
     tot_hits.append(hits)
 
 
+# Save and plot training results
 s_dict = s.get_smat()
 ss_dict = {}
 string_object_mapping = {}
 i = 0
-for key in q_dict.keys():
+for key in s_dict.keys():
     state = "state" + str(i)
     string_object_mapping[state] = key
     ss_dict[state] = s_dict[key]
@@ -101,6 +110,16 @@ with open('string_object_map_s.txt', 'w') as file2:
 
 x_plot = []
 y_plot = []
+
+
+for i in range(len(tot_hits)):
+    if i == 0:
+        x_plot.append(i)
+        y_plot.append(sum(tot_hits[0:i]))
+    else:
+        x_plot.append(i)
+        y_plot.append(sum(tot_hits[0:i])/float(i))
+
 x_char_plot = []
 y_char_plot = []
 
@@ -111,23 +130,14 @@ for i in range(len(x_plot)):
 x_string = ''.join(x_char_plot)
 y_string = ''.join(y_char_plot)
 
-with open('sarsa_x', 'w') as file3:
+with open('sarsa_x.txt', 'w') as file3:
     file3.write(x_string)
 
-with open('sarsa_y', 'w') as file4:
+with open('sarsa_y.txt', 'w') as file4:
     file4.write(y_string)
-
-for i in range(len(tot_hits)):
-    if i == 0:
-        x_plot.append(i)
-        y_plot.append(sum(tot_hits[0:i]))
-    else:
-        x_plot.append(i)
-        y_plot.append(sum(tot_hits[0:i])/float(i))
-
 
 plt.plot(x_plot, y_plot)
 plt.ylabel("Mean Reward Per Episode")
 plt.xlabel("Episode")
-plt.title("Mean Reward Per Episode vs Episode")
+plt.title("Mean Reward Per Episode vs Episode: SARSA")
 plt.savefig("sarsa.png")

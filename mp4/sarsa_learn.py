@@ -1,5 +1,5 @@
 '''
-Sarsa Training class
+Sarsa class with functions to maintain s_matrix and seen_matrix
 '''
 
 class slearn:
@@ -8,17 +8,12 @@ class slearn:
         self.state_seen = {}
 
     def get_s(self, state, action):
-        if state in self.s_matrix.keys():
-            return self.s_matrix[state][action]
+        return self.s_matrix[state][action]
 
     def set_s(self, state, action, value):
-        if state not in self.s_matrix.keys():
-            self.s_matrix[state] = [0,0,0]
         self.s_matrix[state][action] = value
 
     def get_actions(self, state):
-        if state not in self.s_matrix.keys():
-            self.s_matrix[state] = [0, 0, 0]
         return self.s_matrix[state]
 
     def get_smat(self):
@@ -28,9 +23,10 @@ class slearn:
         self.s_matrix = matr
 
     def add_to_state(self, state):
-        if state not in self.state_seen.keys():
-            self.state_seen[state] = 0
         self.state_seen[state] += 1
 
     def seen_val(self, state):
         return self.state_seen[state]
+
+    def set_seenMat(self, matr):
+        self.state_seen = matr

@@ -10,11 +10,26 @@ from simulation import *
 import numpy as np
 
 q = qlearn()
-# currState = PongState(0.5, 0.5, 0.03, 0.01, 0.4)
-# currTuple = currState.getState()
-# curr_key = currState.discreteMap()
+
+# Initiliazing the Q Matrix with 0s for every state
+init_mat = {}
+seen_state = {}
+x_vels = [-1,1]
+for ballX in range(13):
+    for ballY in range(13):
+        for vX in x_vels:
+            for vY in range(-1,2):
+                for paddle in range(12):
+                    init_mat[(ballX, ballY, vX, vY, paddle)] = [0.0, 0.0, 0.0]
+                    seen_state[(ballX, ballY, vX, vY, paddle)] = 0
+init_mat[(12,0,0,0,0)] = [0.0, 0.0, 0.0]
+seen_state[(12,0,0,0,0)] = 0
+q.set_qmat(init_mat)
+q.set_seenMat(seen_state)
 tot_hits = []
 
+
+# Training 100k times
 for i in tqdm(range(100000)):
     # ballX = 0.5
     # ballY = 0.5
@@ -23,10 +38,9 @@ for i in tqdm(range(100000)):
         vX = round(rand.random(), 2)
     if i%2 == 0:
         vX *= -1
-    # vY = round(rand.uniform(-0.03, 0.03), 3)
-    # paddle = 0.4
-    #
-    # currState = PongState(ballX, ballY, vX, vY, paddle)
+
+
+    # Initial ball state for every game
     currState = PongState(0.5, 0.5, vX, 0.01, 0.4)
     currTuple = currState.getState()
     curr_key = currState.discreteMap()
@@ -37,32 +51,29 @@ for i in tqdm(range(100000)):
         print
         print 'Averaging ', sum(tot_hits)/len(tot_hits), ' hit(s) by game ', i
 
+    # Play the game till the AI loses
     while reward != -1:
-        # action, index = currState.chooseAction()
-        # print 'Action:', action, 'Index:', index
 
         actions = [0, 0.04, -0.04]
         q.add_to_state(curr_key)
         action_c_scores = q.get_actions(curr_key)
+
+        # Exploration function to choose a random action or the
+        # action that leads to the max value for a specific state
         if rand.random() < 0.05:
             index = rand.randint(0,2)
             value = action_c_scores[index]
         else:
             value, index = max(action_c_scores), np.argmax(action_c_scores)
 
+        # Go to next state and pick corresponding action with the largest score
         reward = currState.moveNextStep(actions[index])
         next_key = currState.discreteMap()
         action_q_scores = q.get_actions(next_key)
         future_val = max(action_q_scores)
 
-        # print 'Reward:', reward
 
-        # print initialState.getState()
-        # print curr_key
-        # print next_key
-
-        # (50/float((50+(q.seen_val(curr_key)))))
-
+        # Bellman Algorithm to update Q value for current state
         new_value = value + (50/float((50+(q.seen_val(curr_key))))) * (reward + 0.8*future_val - value)
         # print "Value:", value
 
@@ -76,6 +87,8 @@ for i in tqdm(range(100000)):
     tot_hits.append(hits)
 
 
+
+# Save and plot training results
 q_dict = q.get_qmat()
 qs_dict = {}
 string_object_mapping = {}
@@ -86,29 +99,14 @@ for key in q_dict.keys():
     qs_dict[state] = q_dict[key]
     i += 1
 
-with open('qmat2.txt', 'w') as file:
+with open('qmat_new.txt', 'w') as file:
     file.write(json.dumps(qs_dict))
 
-with open('string_object_map2.txt', 'w') as file2:
+with open('string_object_map_new.txt', 'w') as file2:
     file2.write(json.dumps(string_object_mapping))
 
 x_plot = []
 y_plot = []
-x_char_plot = []
-y_char_plot = []
-
-for i in range(len(x_plot)):
-    x_char_plot.append(str(x_plot[i]))
-    y_char_plot.append(str(y_plot[i]))
-
-x_string = ''.join(x_char_plot)
-y_string = ''.join(y_char_plot)
-
-with open('q_x', 'w') as file3:
-    file3.write(x_string)
-
-with open('q_y', 'w') as file4:
-    file4.write(y_string)
 
 
 for i in range(len(tot_hits)):
@@ -120,8 +118,24 @@ for i in range(len(tot_hits)):
         y_plot.append(sum(tot_hits[0:i])/float(i))
 
 
+x_char_plot = []
+y_char_plot = []
+
+for i in range(len(x_plot)):
+    x_char_plot.append(str(x_plot[i]))
+    y_char_plot.append(str(y_plot[i]))
+
+x_string = ''.join(x_char_plot)
+y_string = ''.join(y_char_plot)
+
+with open('q_x_new.txt', 'w') as file3:
+    file3.write(x_string)
+
+with open('q_y_new.txt', 'w') as file4:
+    file4.write(y_string)
+
 plt.plot(x_plot, y_plot)
 plt.ylabel("Mean Reward Per Episode")
 plt.xlabel("Episode")
-plt.title("Mean Reward Per Episode vs Episode")
-plt.savefig("test2.png")
+plt.title("Mean Reward Per Episode vs Episode: Q_Learning")
+plt.savefig("test_new.png")

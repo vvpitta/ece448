@@ -1,5 +1,5 @@
 '''
-simulation of games
+Simulation file used to test Q learning or SARSA
 '''
 
 from pong import *
@@ -9,14 +9,18 @@ import random as rand
 import json
 import os
 import numpy as np
+from sarsa_learn import *
 
-def play_game(q):
+'''
+Plays a game (without any new training) till the agent loses
+'''
+def play_game(s):
     hits = 0
     currState = PongState(0.5, 0.5, 0.03, 0.01, 0.4)
     curr_key = currState.discreteMap()
     paddle_actions = [0, 0.04, -0.04]
     while True:
-        action_idx = np.argmax(q.get_actions(curr_key))
+        action_idx = np.argmax(s.get_actions(curr_key))
         action = paddle_actions[action_idx]
         # print "currState", currState.getState()
         # print "dmap", currState.discreteMap()
@@ -32,11 +36,16 @@ def play_game(q):
         # print
 
 
+
+'''
+main()
+    - Load in values, and simulate 200 games
+'''
 def main():
     q = qlearn()
     current_path = os.getcwd()
-    path1 = "/qmat_old.txt"
-    path2 = "/string_object_map_old.txt"
+    path1 = "/qmat_new.txt"
+    path2 = "/string_object_map_new.txt"
 
     som = {}
     vals = {}
