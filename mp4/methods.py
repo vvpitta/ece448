@@ -5,6 +5,12 @@ import random as rand
 import math
 from cache import *
 
+'''
+    Method: extract
+    Inputs: filename
+    Outputs: data
+    Description: This file takes the raw text and creates data that can be manipulated
+'''
 def extract(filename):
 
     file = open(filename, 'r')
@@ -23,6 +29,13 @@ def extract(filename):
 
     return data
 
+'''
+    Method: weightsBiases
+    Inputs: Dimensions for hidden layers
+    Outputs: The initial weight and bias arrays
+    Description: This method initializes weights and biases that will be used in the neural
+                    net algorithm
+'''
 def weightsBiases(d, d1, d2, d3, d4, parameter):
 
     w_1 = np.zeros((d, d1))
@@ -42,6 +55,12 @@ def weightsBiases(d, d1, d2, d3, d4, parameter):
 
     return [w_1, w_2, w_3, w_4], [b_1, b_2, b_3, b_4]
 
+'''
+    Method: affineForward
+    Inputs: Arrays for modification
+    Outputs: Return output for affine forward
+    Description: The first function for forward propagation
+'''
 def affineForward(A, W, b):
 
     Z = np.dot(A, W) + b
@@ -49,6 +68,12 @@ def affineForward(A, W, b):
 
     return Z, cache
 
+'''
+    Method: reLUForward
+    Inputs: Arrays for modification
+    Outputs: Return output for reLUForward forward
+    Description: The second function for forward propagation
+'''
 def reLUForward(Z):
 
     A = Z
@@ -60,6 +85,12 @@ def reLUForward(Z):
 
     return A, cache
 
+'''
+    Method: affineBackward
+    Inputs: Arrays for modification
+    Outputs: Return output for affine backward
+    Description: The first function for backward propagation
+'''
 def affineBackward(dZ, cache):
 
     A, W, b = cache.getAll()
@@ -76,6 +107,12 @@ def affineBackward(dZ, cache):
 
     return dA, dW, db
 
+'''
+    Method: reLUBackward
+    Inputs: Arrays for modification
+    Outputs: Return output for reLU backward
+    Description: The first function for backward propagation
+'''
 def reLUBackward(dA, cache):
 
     Z, Zchange = cache.getAll()
@@ -90,6 +127,12 @@ def reLUBackward(dA, cache):
 
     return dZ
 
+'''
+    Method: crossEntropy
+    Inputs: Arrays for modification
+    Outputs: The loss of the net
+    Description: This method returns the loss of the function
+'''
 def crossEntropy(F, y):
 
     n = F.shape[0]

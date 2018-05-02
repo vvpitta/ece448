@@ -1,5 +1,9 @@
 # This file will be used to do part 2 of the MP
 
+'''
+    These classes are used in the storage of elements in the forward
+    and backward propagation for the four layer neural net
+'''
 class AffineCache:
 
     def __init__(self, A, W, b):
