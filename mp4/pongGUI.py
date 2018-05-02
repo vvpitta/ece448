@@ -1,3 +1,4 @@
+#Extra Credit Part 1: Pong GUI with user and AI player
 from pong import *
 from qLearning import *
 import json
@@ -24,12 +25,12 @@ POF = 20
 #Colors BLACK and White
 BL = (0,0,0)
 WHT = (255,255,255)
-
+#Draws Arena with given dimensions above
 def arena():
     DISP.fill((0,0,0))
     pygame.draw.rect(DISP, WHT, ((0,0),(WW, WH)), LT*2)
     pygame.draw.line(DISP, WHT, (WW/2 , 0), (WW/2 , WH), LT/4)
-
+#Draws Paddle with given dimensions
 def paddle(pad):
     if pad.bottom > WH-LT:
         pad.bottom = WH - LT
@@ -37,22 +38,22 @@ def paddle(pad):
         pad.top = LT
 
     pygame.draw.rect(DISP, WHT, pad)
-
+#Draws ball with given dimensions
 def ball(bl):
     pygame.draw.rect(DISP, WHT, bl)
-
+# moves ball by number of pixels per frame as defined in SPEED
 def mBl(bl, blPOSX, blPOSY):
     bl.x += (blPOSX*SPEED)
     bl.y += (blPOSY*SPEED)
     return bl
-
+#Checks for collisions with walls and accordingly deals with ball
 def checkColl(bl, blPOSX, blPOSY):
     if bl.top == LT or bl.bottom == (WH-LT) :
         blPOSY = blPOSY * -1
     if bl.left == LT or bl.right == (WW-LT) :
         blPOSX = blPOSX * -1
     return blPOSX, blPOSY
-
+#Checks for collisions with paddle and accordingly deals with ball
 def checkCollBl(bl, pad1, pad2, blPOSX):
     U = (round(rand.uniform(-0.015, 0.015), 3)) * SPEED
     V = (round(rand.uniform(-0.03, 0.03),3)) * SPEED
@@ -64,7 +65,7 @@ def checkCollBl(bl, pad1, pad2, blPOSX):
         return -1, U, V
     else:
         return 1, 0, 0
-
+#Q learning integrated into AI players move
 def AI(bl, pad2, blPOSX, blPOSY, q):
     if bl.x > (WW - POF -LT) or bl.x < WW/2 :
         return pad2
@@ -88,7 +89,7 @@ def AI(bl, pad2, blPOSX, blPOSY, q):
         '''
         pad2.y += action*WH
         return pad2
-
+#performs q learning and then initiates playing of PONG
 def main():
     pygame.init()
     global DISP
